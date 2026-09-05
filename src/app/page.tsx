@@ -6,6 +6,7 @@ import { NetworkAnimation } from '@/components/network-animation'
 import { StorytellingSection } from '@/components/storytelling-section'
 import { SurveyCompletion } from '@/components/survey-completion'
 import { Navigation } from '@/components/navigation'
+import { Footer } from '@/components/footer'
 import { ArrowRight } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { SurveyStep } from '@/components/survey-step'
@@ -170,7 +171,7 @@ export default function Home() {
   
   if (showSurvey) {
     return (
-      <div className="min-h-[100dvh] bg-[#050505] flex flex-col">
+      <div className="min-h-[100dvh] bg-off-white flex flex-col">
         <div className="flex-1 flex items-center justify-center p-6">
           <div className="w-full">
             <ProgressBar current={currentStep + 1} total={surveySteps.length} />
@@ -191,13 +192,7 @@ export default function Home() {
   }
   
   return (
-    <main className="min-h-screen bg-[#050505] relative overflow-hidden">
-      {/* Radial gradient background */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-purple-900/20 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-emerald-900/20 rounded-full blur-[100px]" />
-      </div>
-      
+    <main className="min-h-screen bg-off-white">
       <Navigation />
       
       {/* Hero Section */}
@@ -205,72 +200,58 @@ export default function Home() {
         <NetworkAnimation />
         
         <div className="relative z-10 min-h-[100dvh] flex flex-col">
-          {/* Header */}
-          <header className="p-6 md:p-8">
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: reducedMotion ? 0.2 : 0.6, ease: [0.32, 0.72, 0, 1] }}
-              className="max-w-7xl mx-auto"
-            >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-medium">
-                <span className={`w-2 h-2 rounded-full bg-emerald-400 ${reducedMotion ? '' : 'animate-pulse'}`} aria-hidden="true" />
-                ÉTUDE NATIONALE — DIGITALISATION
-              </div>
-            </motion.div>
-          </header>
-          
           {/* Hero Content */}
-          <div className="flex-1 flex items-center justify-center p-6 md:p-8">
+          <div className="p-6 md:p-8">
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: reducedMotion ? 0.3 : 0.8, delay: reducedMotion ? 0 : 0.2, ease: [0.32, 0.72, 0, 1] }}
-              className="max-w-4xl mx-auto text-center"
+              className="max-w-4xl mx-auto text-center mt-32"
             >
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-6 leading-tight tracking-tight">
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-deep-black mb-6 leading-tight tracking-tight">
                 Comprendre les activités.
                 <br />
                 Révéler les opportunités.
               </h1>
               
-              <p className="text-xl md:text-2xl text-white/60 mb-12 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-xl md:text-2xl text-graphite mb-12 max-w-2xl mx-auto leading-relaxed">
                 Nous cherchons à comprendre comment les professionnels et entrepreneurs travaillent aujourd'hui, quels défis ils rencontrent et comment le numérique pourrait transformer leur activité.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-                <button
+                <Button
+                  size="lg"
                   onClick={handleStartSurvey}
-                  className="group px-8 py-4 rounded-full bg-emerald-500 text-white text-lg font-medium hover:bg-emerald-400 active:scale-[0.98] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] flex items-center gap-3"
+                  icon={<ArrowRight className="w-5 h-5" aria-hidden="true" />}
                 >
-                  <span>Participer à l'étude</span>
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </button>
+                  Participer à l'étude
+                </Button>
                 
-                <button
+                <Button
+                  variant="secondary"
+                  size="lg"
                   onClick={() => window.location.href = '/about'}
-                  className="px-8 py-4 rounded-full bg-white/5 border border-white/10 text-white text-lg font-medium hover:bg-white/10 active:scale-[0.98] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]"
                 >
                   Pourquoi cette étude ?
-                </button>
+                </Button>
               </div>
               
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: reducedMotion ? 0 : 1, ease: [0.32, 0.72, 0, 1] }}
-                className="flex items-center justify-center gap-6 text-sm text-white/40"
+                className="flex items-center justify-center gap-6 text-sm text-graphite"
               >
                 <span className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" aria-hidden="true" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-electric-green" aria-hidden="true" />
                   5 minutes
                 </span>
                 <span className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" aria-hidden="true" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-electric-green" aria-hidden="true" />
                   Gratuit
                 </span>
                 <span className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" aria-hidden="true" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-electric-green" aria-hidden="true" />
                   Vos réponses sont confidentielles
                 </span>
               </motion.div>
@@ -281,6 +262,9 @@ export default function Home() {
       
       {/* Storytelling Section */}
       <StorytellingSection />
+      
+      {/* Footer */}
+      <Footer />
     </main>
   )
 }

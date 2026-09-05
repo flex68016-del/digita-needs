@@ -61,7 +61,7 @@ export function SurveyStep({
     initial: { opacity: 0, x: 50 },
     animate: { opacity: 1, x: 0 },
     exit: { opacity: 0, x: -50 },
-    transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
+    transition: { duration: 0.5 }
   }
   
   return (
@@ -74,7 +74,7 @@ export function SurveyStep({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: reducedMotion ? 0 : 0.2, ease: [0.32, 0.72, 0, 1] }}
-          className="text-sm font-medium text-emerald-400 mb-4 uppercase tracking-[0.15em]"
+          className="text-sm font-medium text-electric-green mb-4 uppercase tracking-[0.15em]"
         >
           ÉTAPE {step} / {totalSteps}
         </motion.div>
@@ -83,7 +83,7 @@ export function SurveyStep({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: reducedMotion ? 0 : 0.3, ease: [0.32, 0.72, 0, 1] }}
-          className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight tracking-tight"
+          className="text-4xl md:text-5xl font-bold text-deep-black mb-4 leading-tight tracking-tight"
         >
           {title}
         </motion.h2>
@@ -93,7 +93,7 @@ export function SurveyStep({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: reducedMotion ? 0 : 0.4, ease: [0.32, 0.72, 0, 1] }}
-            className="text-lg text-white/60 max-w-2xl"
+            className="text-lg text-graphite max-w-2xl"
           >
             {subtitle}
           </motion.p>
@@ -116,33 +116,33 @@ export function SurveyStep({
               aria-pressed={isSelected}
               aria-label={option.label}
               className={`
-                relative p-6 rounded-2xl border-2 transition-all duration-300 text-left focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2
+                relative p-6 rounded-2xl border-2 transition-all duration-300 text-left focus:outline-none focus:ring-2 focus:ring-electric-green focus:ring-offset-2
                 ${isSelected
-                  ? 'border-emerald-400 bg-emerald-500/10'
-                  : 'border-white/10 hover:border-white/20 bg-white/5'
+                  ? 'border-electric-green bg-electric-green/5'
+                  : 'border-black/10 hover:border-black/20 bg-white'
                 }
               `}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   {option.icon && (
-                    <div className="mb-3 text-emerald-400" aria-hidden="true">
+                    <div className="mb-3 text-electric-green" aria-hidden="true">
                       {option.icon}
                     </div>
                   )}
-                  <div className="font-semibold text-white mb-1">
+                  <div className="font-semibold text-deep-black mb-1">
                     {option.label}
                   </div>
                   {option.description && (
-                    <div className="text-sm text-white/60">
+                    <div className="text-sm text-graphite">
                       {option.description}
                     </div>
                   )}
                 </div>
                 
                 {isSelected && (
-                  <div className="w-6 h-6 rounded-full bg-emerald-400 flex items-center justify-center flex-shrink-0 ml-4" aria-hidden="true">
-                    <Check className="w-4 h-4 text-black" />
+                  <div className="w-6 h-6 rounded-full bg-electric-green flex items-center justify-center flex-shrink-0 ml-4" aria-hidden="true">
+                    <Check className="w-4 h-4 text-deep-black" />
                   </div>
                 )}
               </div>
@@ -161,7 +161,7 @@ export function SurveyStep({
           {onBack && (
             <button
               onClick={onBack}
-              className="text-white/60 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-400 rounded px-2 py-1"
+              className="text-graphite hover:text-deep-black transition-colors focus:outline-none focus:ring-2 focus:ring-electric-green rounded px-2 py-1"
             >
               Retour
             </button>
@@ -169,7 +169,7 @@ export function SurveyStep({
           
           <button
             onClick={handleContinue}
-            className="ml-auto flex items-center gap-2 bg-emerald-500 text-black px-6 py-3 rounded-full hover:bg-emerald-400 active:scale-[0.98] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2"
+            className="ml-auto flex items-center gap-2 bg-electric-green text-deep-black px-6 py-3 rounded-full hover:bg-electric-green/90 active:scale-[0.98] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] focus:outline-none focus:ring-2 focus:ring-electric-green focus:ring-offset-2"
           >
             Continuer
             <ChevronRight className="w-4 h-4" aria-hidden="true" />

@@ -12,7 +12,10 @@ import {
 import { Download, Filter, TrendingUp, Users, Building, MapPin, Target, AlertCircle } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
-const COLORS = ['#18C77A', '#3157FF', '#F59E0B', '#EF4444', '#8B5CF6']
+// Dynamic export to prevent static generation
+export const dynamic = 'force-dynamic'
+
+const COLORS = ['#18C77A', '#3157FF', '#6B7280', '#F59E0B', '#EF4444']
 
 interface Stats {
   totalParticipants: number
@@ -67,6 +70,12 @@ export default function AdminPage() {
   })
   
   const fetchData = useCallback(async () => {
+    if (!supabase) {
+      setError('Configuration Supabase manquante')
+      setLoading(false)
+      return
+    }
+    
     try {
       setLoading(true)
       setError(null)
@@ -266,9 +275,9 @@ export default function AdminPage() {
   
   const getOpportunityBadge = (level: string) => {
     const colors = {
-      high: 'bg-red-500/20 text-red-400 border-red-500/30',
-      medium: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-      low: 'bg-white/10 text-white/60 border-white/20'
+      high: 'bg-electric-green/10 text-electric-green border-electric-green/30',
+      medium: 'bg-amber-100 text-amber-700 border-amber-300',
+      low: 'bg-graphite/10 text-graphite border-graphite/30'
     }
     const labels = {
       high: '🔥 Forte',
@@ -283,13 +292,7 @@ export default function AdminPage() {
   }
   
   return (
-    <div className="min-h-screen bg-[#050505] relative overflow-hidden">
-      {/* Radial gradient background */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-purple-900/20 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-emerald-900/20 rounded-full blur-[100px]" />
-      </div>
-      
+    <div className="min-h-screen bg-off-white relative overflow-hidden">
       <Navigation />
       
       <div className="relative z-10 p-8 md:p-16 max-w-7xl mx-auto">
@@ -300,13 +303,13 @@ export default function AdminPage() {
           transition={{ duration: 0.8, ease: [0.32, 0.72, 0, 1] }}
           className="mb-16"
         >
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6">
-            <span className="text-[10px] uppercase tracking-[0.2em] font-medium text-white/60">Market Intelligence</span>
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-electric-green/10 border border-electric-green/20 mb-6">
+            <span className="text-[10px] uppercase tracking-[0.2em] font-medium text-electric-green">Market Intelligence</span>
           </div>
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-4 tracking-tight">
+          <h1 className="text-5xl md:text-7xl font-bold text-deep-black mb-4 tracking-tight">
             Dashboard
           </h1>
-          <p className="text-xl text-white/40 max-w-2xl">
+          <p className="text-xl text-graphite max-w-2xl">
             Analyse des opportunités de marché pour la digitalisation
           </p>
         </motion.div>
@@ -316,30 +319,30 @@ export default function AdminPage() {
           <div className="flex items-center justify-center py-24">
             <div className="text-center">
               <div className="relative w-16 h-16 mx-auto mb-6">
-                <div className="absolute inset-0 rounded-full border-2 border-white/10" />
-                <div className="absolute inset-0 rounded-full border-2 border-emerald-400 border-t-transparent animate-spin" />
+                <div className="absolute inset-0 rounded-full border-2 border-black/10" />
+                <div className="absolute inset-0 rounded-full border-2 border-electric-green border-t-transparent animate-spin" />
               </div>
-              <p className="text-white/60 text-lg">Chargement des données...</p>
+              <p className="text-graphite text-lg">Chargement des données...</p>
             </div>
           </div>
         )}
 
         {/* Error State */}
         {error && (
-          <div className="bg-red-500/10 border border-red-500/20 rounded-3xl p-8 mb-12 backdrop-blur-xl">
+          <div className="bg-red-50 border border-red-200 rounded-2xl p-8 mb-12">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
-                <AlertCircle className="w-6 h-6 text-red-400" />
+              <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                <AlertCircle className="w-6 h-6 text-red-600" />
               </div>
               <div>
-                <p className="font-medium text-red-400 text-lg">Erreur de chargement</p>
-                <p className="text-sm text-red-400/60">{error}</p>
+                <p className="font-medium text-red-900 text-lg">Erreur de chargement</p>
+                <p className="text-sm text-red-700">{error}</p>
               </div>
             </div>
           </div>
         )}
 
-        {/* KPI Cards - Asymmetrical Bento Grid */}
+        {/* KPI Cards */}
         {!loading && !error && stats && (
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -347,75 +350,67 @@ export default function AdminPage() {
             transition={{ duration: 0.8, ease: [0.32, 0.72, 0, 1], delay: 0.1 }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16"
           >
-            {/* Double-Bezel Card 1 */}
-            <div className="bg-white/5 rounded-[2rem] p-1.5 border border-white/10">
-              <div className="bg-black/40 rounded-[calc(2rem-0.375rem)] p-6 h-full backdrop-blur-2xl">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center">
-                    <Users className="w-6 h-6 text-emerald-400" />
-                  </div>
-                  <span className="text-xs uppercase tracking-[0.15em] text-white/40">Participants</span>
+            {/* Card 1 */}
+            <div className="bg-white rounded-2xl p-6 border border-black/10 shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <div className="w-12 h-12 rounded-xl bg-electric-green/10 flex items-center justify-center">
+                  <Users className="w-6 h-6 text-electric-green" />
                 </div>
-                <div className="text-4xl font-bold text-white mb-2 tracking-tight">
-                  {stats.totalParticipants.toLocaleString()}
-                </div>
-                <div className="text-sm text-white/40">
-                  {stats.interestedCount} intéressés
-                </div>
+                <span className="text-xs uppercase tracking-[0.15em] text-graphite">Participants</span>
+              </div>
+              <div className="text-4xl font-bold text-deep-black mb-2 tracking-tight">
+                {stats.totalParticipants.toLocaleString()}
+              </div>
+              <div className="text-sm text-graphite">
+                {stats.interestedCount} intéressés
               </div>
             </div>
             
-            {/* Double-Bezel Card 2 */}
-            <div className="bg-white/5 rounded-[2rem] p-1.5 border border-white/10">
-              <div className="bg-black/40 rounded-[calc(2rem-0.375rem)] p-6 h-full backdrop-blur-2xl">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center">
-                    <Building className="w-6 h-6 text-blue-400" />
-                  </div>
-                  <span className="text-xs uppercase tracking-[0.15em] text-white/40">Activités</span>
+            {/* Card 2 */}
+            <div className="bg-white rounded-2xl p-6 border border-black/10 shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <div className="w-12 h-12 rounded-xl bg-deep-blue/10 flex items-center justify-center">
+                  <Building className="w-6 h-6 text-deep-blue" />
                 </div>
-                <div className="text-4xl font-bold text-white mb-2 tracking-tight">
-                  {stats.totalActivities}
-                </div>
-                <div className="text-sm text-white/40">
-                  {stats.totalCities} villes couvertes
-                </div>
+                <span className="text-xs uppercase tracking-[0.15em] text-graphite">Activités</span>
+              </div>
+              <div className="text-4xl font-bold text-deep-black mb-2 tracking-tight">
+                {stats.totalActivities}
+              </div>
+              <div className="text-sm text-graphite">
+                {stats.totalCities} villes couvertes
               </div>
             </div>
             
-            {/* Double-Bezel Card 3 */}
-            <div className="bg-white/5 rounded-[2rem] p-1.5 border border-white/10">
-              <div className="bg-black/40 rounded-[calc(2rem-0.375rem)] p-6 h-full backdrop-blur-2xl">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center">
-                    <TrendingUp className="w-6 h-6 text-emerald-400" />
-                  </div>
-                  <span className="text-xs uppercase tracking-[0.15em] text-white/40">Score moyen</span>
+            {/* Card 3 */}
+            <div className="bg-white rounded-2xl p-6 border border-black/10 shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <div className="w-12 h-12 rounded-xl bg-electric-green/10 flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-electric-green" />
                 </div>
-                <div className="text-4xl font-bold text-white mb-2 tracking-tight">
-                  {stats.digitalMaturityAvg}/10
-                </div>
-                <div className="text-sm text-white/40">
-                  Maturité digitale
-                </div>
+                <span className="text-xs uppercase tracking-[0.15em] text-graphite">Score moyen</span>
+              </div>
+              <div className="text-4xl font-bold text-deep-black mb-2 tracking-tight">
+                {stats.digitalMaturityAvg}/10
+              </div>
+              <div className="text-sm text-graphite">
+                Maturité digitale
               </div>
             </div>
             
-            {/* Double-Bezel Card 4 */}
-            <div className="bg-white/5 rounded-[2rem] p-1.5 border border-white/10">
-              <div className="bg-black/40 rounded-[calc(2rem-0.375rem)] p-6 h-full backdrop-blur-2xl">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center">
-                    <Target className="w-6 h-6 text-blue-400" />
-                  </div>
-                  <span className="text-xs uppercase tracking-[0.15em] text-white/40">Budget moyen</span>
+            {/* Card 4 */}
+            <div className="bg-white rounded-2xl p-6 border border-black/10 shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <div className="w-12 h-12 rounded-xl bg-deep-blue/10 flex items-center justify-center">
+                  <Target className="w-6 h-6 text-deep-blue" />
                 </div>
-                <div className="text-4xl font-bold text-white mb-2 tracking-tight">
-                  {new Intl.NumberFormat('fr-FR').format(stats.budgetAvg)} F
-                </div>
-                <div className="text-sm text-white/40">
-                  Par participant intéressé
-                </div>
+                <span className="text-xs uppercase tracking-[0.15em] text-graphite">Budget moyen</span>
+              </div>
+              <div className="text-4xl font-bold text-deep-black mb-2 tracking-tight">
+                {new Intl.NumberFormat('fr-FR').format(stats.budgetAvg)} F
+              </div>
+              <div className="text-sm text-graphite">
+                Par participant intéressé
               </div>
             </div>
           </motion.div>
@@ -432,44 +427,44 @@ export default function AdminPage() {
             <select
               value={filters.activity}
               onChange={(e) => setFilters({ ...filters, activity: e.target.value })}
-              className="px-6 py-3 rounded-full bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-emerald-400/50 transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]"
+              className="px-6 py-3 rounded-full bg-white border border-black/10 text-deep-black text-sm focus:outline-none focus:border-electric-green transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]"
             >
-              <option value="all" className="bg-[#0a0a0a]">Toutes les activités</option>
+              <option value="all">Toutes les activités</option>
               {activities.map(activity => (
-                <option key={activity.name} value={activity.name} className="bg-[#0a0a0a]">{activity.name}</option>
+                <option key={activity.name} value={activity.name}>{activity.name}</option>
               ))}
             </select>
             
             <select
               value={filters.opportunityLevel}
               onChange={(e) => setFilters({ ...filters, opportunityLevel: e.target.value })}
-              className="px-6 py-3 rounded-full bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-emerald-400/50 transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]"
+              className="px-6 py-3 rounded-full bg-white border border-black/10 text-deep-black text-sm focus:outline-none focus:border-electric-green transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]"
             >
-              <option value="all" className="bg-[#0a0a0a]">Tous les niveaux</option>
-              <option value="high" className="bg-[#0a0a0a]">Opportunité forte</option>
-              <option value="medium" className="bg-[#0a0a0a]">Opportunité moyenne</option>
-              <option value="low" className="bg-[#0a0a0a]">Opportunité faible</option>
+              <option value="all">Tous les niveaux</option>
+              <option value="high">Opportunité forte</option>
+              <option value="medium">Opportunité moyenne</option>
+              <option value="low">Opportunité faible</option>
             </select>
           </div>
           
           <div className="flex gap-3">
             <button
               onClick={() => exportData('csv')}
-              className="group px-6 py-3 rounded-full bg-white/5 border border-white/10 text-white text-sm font-medium hover:bg-white/10 active:scale-[0.98] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] flex items-center gap-3"
+              className="group px-6 py-3 rounded-full bg-white border border-black/10 text-deep-black text-sm font-medium hover:bg-black/5 active:scale-[0.98] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] flex items-center gap-3"
             >
               <Download className="w-4 h-4" />
               <span>CSV</span>
             </button>
             <button
               onClick={() => exportData('excel')}
-              className="group px-6 py-3 rounded-full bg-white/5 border border-white/10 text-white text-sm font-medium hover:bg-white/10 active:scale-[0.98] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] flex items-center gap-3"
+              className="group px-6 py-3 rounded-full bg-white border border-black/10 text-deep-black text-sm font-medium hover:bg-black/5 active:scale-[0.98] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] flex items-center gap-3"
             >
               <Download className="w-4 h-4" />
               <span>Excel</span>
             </button>
             <button
               onClick={() => exportData('json')}
-              className="group px-6 py-3 rounded-full bg-white/5 border border-white/10 text-white text-sm font-medium hover:bg-white/10 active:scale-[0.98] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] flex items-center gap-3"
+              className="group px-6 py-3 rounded-full bg-white border border-black/10 text-deep-black text-sm font-medium hover:bg-black/5 active:scale-[0.98] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] flex items-center gap-3"
             >
               <Download className="w-4 h-4" />
               <span>JSON</span>
@@ -477,7 +472,7 @@ export default function AdminPage() {
           </div>
         </motion.div>
         
-        {/* Charts - Double-Bezel Cards */}
+        {/* Charts */}
         {!loading && !error && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-16">
             <motion.div
@@ -485,26 +480,24 @@ export default function AdminPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: [0.32, 0.72, 0, 1], delay: 0.3 }}
             >
-              <div className="bg-white/5 rounded-[2rem] p-1.5 border border-white/10 h-full">
-                <div className="bg-black/40 rounded-[calc(2rem-0.375rem)] p-8 h-full backdrop-blur-2xl">
-                  <h3 className="text-xl font-semibold text-white mb-6 tracking-tight">Activités les plus représentées</h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={activities}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                      <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} fontSize={12} stroke="rgba(255,255,255,0.4)" />
-                      <YAxis fontSize={12} stroke="rgba(255,255,255,0.4)" />
-                      <Tooltip 
-                        contentStyle={{ 
-                          backgroundColor: 'rgba(0,0,0,0.8)', 
-                          border: '1px solid rgba(255,255,255,0.1)', 
-                          borderRadius: '12px',
-                          color: 'white'
-                        }} 
-                      />
-                      <Bar dataKey="count" fill="#18C77A" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
+              <div className="bg-white rounded-2xl p-8 border border-black/10 shadow-sm h-full">
+                <h3 className="text-xl font-semibold text-deep-black mb-6 tracking-tight">Activités les plus représentées</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={activities}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" />
+                    <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} fontSize={12} stroke="rgba(0,0,0,0.4)" />
+                    <YAxis fontSize={12} stroke="rgba(0,0,0,0.4)" />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'white', 
+                        border: '1px solid rgba(0,0,0,0.1)', 
+                        borderRadius: '12px',
+                        color: '#0A0A0A'
+                      }} 
+                    />
+                    <Bar dataKey="count" fill="#18C77A" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </motion.div>
             
@@ -513,36 +506,34 @@ export default function AdminPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: [0.32, 0.72, 0, 1], delay: 0.4 }}
             >
-              <div className="bg-white/5 rounded-[2rem] p-1.5 border border-white/10 h-full">
-                <div className="bg-black/40 rounded-[calc(2rem-0.375rem)] p-8 h-full backdrop-blur-2xl">
-                  <h3 className="text-xl font-semibold text-white mb-6 tracking-tight">Problèmes les plus fréquents</h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
-                      <Pie
-                        data={challenges}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {challenges.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip 
-                        contentStyle={{ 
-                          backgroundColor: 'rgba(0,0,0,0.8)', 
-                          border: '1px solid rgba(255,255,255,0.1)', 
-                          borderRadius: '12px',
-                          color: 'white'
-                        }} 
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
+              <div className="bg-white rounded-2xl p-8 border border-black/10 shadow-sm h-full">
+                <h3 className="text-xl font-semibold text-deep-black mb-6 tracking-tight">Problèmes les plus fréquents</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={challenges}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {challenges.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'white', 
+                        border: '1px solid rgba(0,0,0,0.1)', 
+                        borderRadius: '12px',
+                        color: '#0A0A0A'
+                      }} 
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
               </div>
             </motion.div>
             
@@ -551,26 +542,24 @@ export default function AdminPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: [0.32, 0.72, 0, 1], delay: 0.5 }}
             >
-              <div className="bg-white/5 rounded-[2rem] p-1.5 border border-white/10 h-full">
-                <div className="bg-black/40 rounded-[calc(2rem-0.375rem)] p-8 h-full backdrop-blur-2xl">
-                  <h3 className="text-xl font-semibold text-white mb-6 tracking-tight">Solutions numériques demandées</h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={digitalNeeds} layout="horizontal">
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                      <XAxis type="number" fontSize={12} stroke="rgba(255,255,255,0.4)" />
-                      <YAxis dataKey="name" type="category" width={100} fontSize={12} stroke="rgba(255,255,255,0.4)" />
-                      <Tooltip 
-                        contentStyle={{ 
-                          backgroundColor: 'rgba(0,0,0,0.8)', 
-                          border: '1px solid rgba(255,255,255,0.1)', 
-                          borderRadius: '12px',
-                          color: 'white'
-                        }} 
-                      />
-                      <Bar dataKey="value" fill="#3157FF" radius={[0, 4, 4, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
+              <div className="bg-white rounded-2xl p-8 border border-black/10 shadow-sm h-full">
+                <h3 className="text-xl font-semibold text-deep-black mb-6 tracking-tight">Solutions numériques demandées</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={digitalNeeds} layout="horizontal">
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" />
+                    <XAxis type="number" fontSize={12} stroke="rgba(0,0,0,0.4)" />
+                    <YAxis dataKey="name" type="category" width={100} fontSize={12} stroke="rgba(0,0,0,0.4)" />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'white', 
+                        border: '1px solid rgba(0,0,0,0.1)', 
+                        borderRadius: '12px',
+                        color: '#0A0A0A'
+                      }} 
+                    />
+                    <Bar dataKey="value" fill="#3157FF" radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </motion.div>
             
@@ -579,79 +568,75 @@ export default function AdminPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: [0.32, 0.72, 0, 1], delay: 0.6 }}
             >
-              <div className="bg-white/5 rounded-[2rem] p-1.5 border border-white/10 h-full">
-                <div className="bg-black/40 rounded-[calc(2rem-0.375rem)] p-8 h-full backdrop-blur-2xl">
-                  <h3 className="text-xl font-semibold text-white mb-6 tracking-tight">Répartition des budgets</h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={budgets}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                      <XAxis dataKey="name" fontSize={12} stroke="rgba(255,255,255,0.4)" />
-                      <YAxis fontSize={12} stroke="rgba(255,255,255,0.4)" />
-                      <Tooltip 
-                        contentStyle={{ 
-                          backgroundColor: 'rgba(0,0,0,0.8)', 
-                          border: '1px solid rgba(255,255,255,0.1)', 
-                          borderRadius: '12px',
-                          color: 'white'
-                        }} 
-                      />
-                      <Bar dataKey="value" fill="#F59E0B" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
+              <div className="bg-white rounded-2xl p-8 border border-black/10 shadow-sm h-full">
+                <h3 className="text-xl font-semibold text-deep-black mb-6 tracking-tight">Répartition des budgets</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={budgets}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" />
+                    <XAxis dataKey="name" fontSize={12} stroke="rgba(0,0,0,0.4)" />
+                    <YAxis fontSize={12} stroke="rgba(0,0,0,0.4)" />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'white', 
+                        border: '1px solid rgba(0,0,0,0.1)', 
+                        borderRadius: '12px',
+                        color: '#0A0A0A'
+                      }} 
+                    />
+                    <Bar dataKey="value" fill="#F59E0B" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </motion.div>
           </div>
         )}
         
-        {/* Opportunity Scores Table - Double-Bezel */}
+        {/* Opportunity Scores Table */}
         {!loading && !error && (
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.32, 0.72, 0, 1], delay: 0.7 }}
           >
-            <div className="bg-white/5 rounded-[2rem] p-1.5 border border-white/10">
-              <div className="bg-black/40 rounded-[calc(2rem-0.375rem)] p-8 backdrop-blur-2xl">
-                <h3 className="text-xl font-semibold text-white mb-6 tracking-tight">Scores d'opportunité par secteur</h3>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-white/10">
-                        <th className="text-left py-4 px-6 text-sm font-medium text-white/40 uppercase tracking-[0.1em]">Secteur</th>
-                        <th className="text-left py-4 px-6 text-sm font-medium text-white/40 uppercase tracking-[0.1em]">Score</th>
-                        <th className="text-left py-4 px-6 text-sm font-medium text-white/40 uppercase tracking-[0.1em]">Niveau</th>
-                        <th className="text-left py-4 px-6 text-sm font-medium text-white/40 uppercase tracking-[0.1em]">Recommandation</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {opportunityScores.map((item, index) => (
-                        <tr key={index} className="border-b border-white/5 hover:bg-white/5 transition-colors duration-300">
-                          <td className="py-4 px-6 font-medium text-white">{item.name}</td>
-                          <td className="py-4 px-6">
-                            <div className="flex items-center gap-3">
-                              <div className="w-32 bg-white/10 rounded-full h-2">
-                                <div
-                                  className="bg-emerald-400 h-2 rounded-full transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]"
-                                  style={{ width: `${item.score}%` }}
-                                />
-                              </div>
-                              <span className="text-sm font-medium text-white">{item.score}/100</span>
+            <div className="bg-white rounded-2xl p-8 border border-black/10 shadow-sm">
+              <h3 className="text-xl font-semibold text-deep-black mb-6 tracking-tight">Scores d'opportunité par secteur</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-black/10">
+                      <th className="text-left py-4 px-6 text-sm font-medium text-graphite uppercase tracking-[0.1em]">Secteur</th>
+                      <th className="text-left py-4 px-6 text-sm font-medium text-graphite uppercase tracking-[0.1em]">Score</th>
+                      <th className="text-left py-4 px-6 text-sm font-medium text-graphite uppercase tracking-[0.1em]">Niveau</th>
+                      <th className="text-left py-4 px-6 text-sm font-medium text-graphite uppercase tracking-[0.1em]">Recommandation</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {opportunityScores.map((item, index) => (
+                      <tr key={index} className="border-b border-black/5 hover:bg-black/5 transition-colors duration-300">
+                        <td className="py-4 px-6 font-medium text-deep-black">{item.name}</td>
+                        <td className="py-4 px-6">
+                          <div className="flex items-center gap-3">
+                            <div className="w-32 bg-black/10 rounded-full h-2">
+                              <div
+                                className="bg-electric-green h-2 rounded-full transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]"
+                                style={{ width: `${item.score}%` }}
+                              />
                             </div>
-                          </td>
-                          <td className="py-4 px-6">
-                            {getOpportunityBadge(item.level)}
-                          </td>
-                          <td className="py-4 px-6 text-sm text-white/60">
-                            {item.level === 'high' && 'Priorité haute - lancer solution'}
-                            {item.level === 'medium' && 'Étudier le marché'}
-                            {item.level === 'low' && 'Surveiller l\'évolution'}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                            <span className="text-sm font-medium text-deep-black">{item.score}/100</span>
+                          </div>
+                        </td>
+                        <td className="py-4 px-6">
+                          {getOpportunityBadge(item.level)}
+                        </td>
+                        <td className="py-4 px-6 text-sm text-graphite">
+                          {item.level === 'high' && 'Priorité haute - lancer solution'}
+                          {item.level === 'medium' && 'Étudier le marché'}
+                          {item.level === 'low' && 'Surveiller l\'évolution'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           </motion.div>

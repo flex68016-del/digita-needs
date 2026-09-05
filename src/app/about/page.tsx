@@ -4,6 +4,7 @@ import { motion } from 'motion/react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Navigation } from '@/components/navigation'
+import { Footer } from '@/components/footer'
 import { ArrowRight, Target, Users, TrendingUp, Shield, Clock, Globe } from 'lucide-react'
 
 export default function AboutPage() {
@@ -247,6 +248,9 @@ export default function AboutPage() {
           </motion.div>
         </div>
       </section>
+      
+      {/* Footer */}
+      <Footer />
     </main>
   )
 }

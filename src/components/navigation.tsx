@@ -21,10 +21,10 @@ export function Navigation() {
           initial={{ y: -100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6, ease: [0.32, 0.72, 0, 1] }}
-          className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-full px-6 py-3 shadow-2xl"
+          className="bg-white/80 backdrop-blur-xl border border-black/5 rounded-full px-6 py-3 shadow-lg"
         >
           <div className="flex items-center gap-6">
-            <Link href="/" className="text-xl font-bold text-white tracking-tight">
+            <Link href="/" className="text-xl font-bold text-deep-black tracking-tight">
               Digital Needs
             </Link>
             
@@ -33,7 +33,7 @@ export function Navigation() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="text-sm text-white/60 hover:text-white transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]"
+                  className="text-sm text-graphite hover:text-deep-black transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]"
                 >
                   {item.label}
                 </Link>
@@ -41,19 +41,19 @@ export function Navigation() {
             </div>
             
             <div className="hidden md:block">
-              <button
-                onClick={() => window.location.href = '/'}
-                className="px-6 py-2 rounded-full bg-emerald-500 text-white text-sm font-medium hover:bg-emerald-400 active:scale-[0.98] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]"
+              <Link
+                href="/"
+                className="px-6 py-2 rounded-full bg-electric-green text-deep-black text-sm font-medium hover:bg-electric-green/90 active:scale-[0.98] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] inline-block"
               >
                 Participer
-              </button>
+              </Link>
             </div>
             
             <button
               onClick={() => setIsOpen(true)}
-              className="md:hidden p-2 hover:bg-white/10 rounded-full transition-colors"
+              className="md:hidden p-2 hover:bg-black/5 rounded-full transition-colors"
             >
-              <Menu className="w-5 h-5 text-white" />
+              <Menu className="w-5 h-5 text-deep-black" />
             </button>
           </div>
         </motion.div>
@@ -73,14 +73,14 @@ export function Navigation() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="absolute right-0 top-0 h-full w-full max-w-md bg-[#050505] p-8 border-l border-white/10"
+              className="absolute right-0 top-0 h-full w-full max-w-md bg-white p-8 border-l border-black/5"
               onClick={(e) => e.stopPropagation()}
             >
               <button
                 onClick={() => setIsOpen(false)}
-                className="absolute top-6 right-6 p-2 hover:bg-white/10 rounded-full transition-colors"
+                className="absolute top-6 right-6 p-2 hover:bg-black/5 rounded-full transition-colors"
               >
-                <X className="w-6 h-6 text-white" />
+                <X className="w-6 h-6 text-deep-black" />
               </button>
               
               <div className="flex flex-col gap-6 mt-16">
@@ -94,7 +94,7 @@ export function Navigation() {
                     <Link
                       href={item.href}
                       onClick={() => setIsOpen(false)}
-                      className="text-2xl font-semibold text-white hover:text-emerald-400 transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]"
+                      className="text-2xl font-semibold text-deep-black hover:text-electric-green transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]"
                     >
                       {item.label}
                     </Link>
@@ -107,15 +107,13 @@ export function Navigation() {
                   transition={{ delay: 0.4, ease: [0.32, 0.72, 0, 1] }}
                   className="pt-6"
                 >
-                  <button
-                    className="w-full px-8 py-4 rounded-full bg-emerald-500 text-white text-lg font-medium hover:bg-emerald-400 active:scale-[0.98] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]"
-                    onClick={() => {
-                      setIsOpen(false)
-                      window.location.href = '/'
-                    }}
+                  <Link
+                    href="/"
+                    onClick={() => setIsOpen(false)}
+                    className="w-full px-8 py-4 rounded-full bg-electric-green text-deep-black text-lg font-medium hover:bg-electric-green/90 active:scale-[0.98] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] inline-block text-center"
                   >
                     Participer à l'étude
-                  </button>
+                  </Link>
                 </motion.div>
               </div>
             </motion.div>

@@ -1,12 +1,14 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 @theme {
   --color-deep-black: #0A0A0A;
   --color-off-white: #FAFAF8;
   --color-electric-green: #18C77A;
   --color-deep-blue: #3157FF;
+  --color-light-gray: #F5F5F5;
+  --color-graphite: #6B7280;
+  --font-display: "Geist", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
 }
 
 * {
@@ -19,8 +21,6 @@ html {
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background-color: #050505;
-  color: #ffffff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -45,14 +45,14 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0A0A0A;
+  background: #F5F5F5;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #333;
+  background: #6B7280;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #0A0A0A;
 }
