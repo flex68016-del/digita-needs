@@ -20,13 +20,19 @@ export async function GET(request: NextRequest) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
+    console.log('[Stats API] Supabase URL configured:', !!supabaseUrl)
+    console.log('[Stats API] Service role key configured:', !!serviceRoleKey)
+
     if (!supabaseUrl || !serviceRoleKey) {
+      console.error('[Stats API] Missing Supabase configuration')
       return NextResponse.json({ error: 'Configuration Supabase manquante (service role)' }, { status: 500 })
     }
 
     const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey)
     const activity = params.activity || 'all'
     const opportunityLevel = params.opportunityLevel || 'all'
+
+    console.log('[Stats API] Fetching data with filters:', { activity, opportunityLevel })
 
     let query = supabaseAdmin
       .from('participants')
@@ -49,7 +55,12 @@ export async function GET(request: NextRequest) {
       supabaseAdmin.from('investment_intention').select('budget_range, willing_to_invest'),
     ])
 
+    console.log('[Stats API] Participants error:', participantsError)
+    console.log('[Stats API] Participants count:', participants?.length)
+    console.log('[Stats API] Total participants:', totalParticipants)
+
     if (participantsError) {
+      console.error('[Stats API] Participants query failed:', participantsError)
       return NextResponse.json({ error: participantsError.message }, { status: 500 })
     }
 
@@ -61,6 +72,7 @@ export async function GET(request: NextRequest) {
       investmentData: investmentData || [],
     })
   } catch (error) {
+    console.error('[Stats API] Unexpected error:', error)
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: 'Paramètres invalides' }, { status: 400 })
     }
