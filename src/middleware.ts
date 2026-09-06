@@ -1,47 +1,45 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-export function middleware(request: NextRequest) {
+async function computeSessionToken(password: string): Promise<string> {
+  const data = new TextEncoder().encode(`${password}:admin-session`)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  return Array.from(new Uint8Array(hashBuffer))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('')
+}
+
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Protect admin routes
-  if (pathname.startsWith('/admin')) {
-    const authHeader = request.headers.get('authorization')
-    const adminPassword = process.env.ADMIN_PASSWORD
+  if (!pathname.startsWith('/admin') && !pathname.startsWith('/api/admin')) {
+    return NextResponse.next()
+  }
 
-    // If no admin password is set, allow access (dev mode)
-    if (!adminPassword) {
-      return NextResponse.next()
-    }
+  if (pathname === '/admin/login' || pathname === '/api/admin/login') {
+    return NextResponse.next()
+  }
 
-    // Check for Basic Auth
-    if (!authHeader || !authHeader.startsWith('Basic ')) {
-      return new NextResponse('Authentication required', {
-        status: 401,
-        headers: {
-          'WWW-Authenticate': 'Basic realm="Admin Area"',
-        },
-      })
-    }
+  const adminPassword = process.env.ADMIN_PASSWORD
 
-    const base64Credentials = authHeader.split(' ')[1]
-    const credentials = Buffer.from(base64Credentials, 'base64').toString('utf-8')
-    const [username, password] = credentials.split(':')
+  if (!adminPassword) {
+    return new NextResponse(
+      "Configuration manquante : ADMIN_PASSWORD n'est pas défini sur ce déploiement.",
+      { status: 500 }
+    )
+  }
 
-    // Accept any username, but check password
-    if (password !== adminPassword) {
-      return new NextResponse('Invalid credentials', {
-        status: 401,
-        headers: {
-          'WWW-Authenticate': 'Basic realm="Admin Area"',
-        },
-      })
-    }
+  const sessionCookie = request.cookies.get('admin_session')?.value
+  const expectedToken = await computeSessionToken(adminPassword)
+
+  if (sessionCookie !== expectedToken) {
+    const loginUrl = new URL('/admin/login', request.url)
+    return NextResponse.redirect(loginUrl)
   }
 
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: '/admin/:path*',
+  matcher: ['/admin/:path*', '/api/admin/:path*'],
 }

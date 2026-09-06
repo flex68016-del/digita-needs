@@ -9,8 +9,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, LineChart, Line
 } from 'recharts'
-import { Download, Filter, TrendingUp, Users, Building, MapPin, Target, AlertCircle } from 'lucide-react'
-import { supabase } from '@/lib/supabase'
+import { Download, Filter, TrendingUp, Users, Building, MapPin, Target, AlertCircle, LogOut } from 'lucide-react'
 
 // Dynamic export to prevent static generation
 export const dynamic = 'force-dynamic'
@@ -70,53 +69,20 @@ export default function AdminPage() {
   })
   
   const fetchData = useCallback(async () => {
-    if (!supabase) {
-      setError('Configuration Supabase manquante')
-      setLoading(false)
-      return
-    }
-    
     try {
       setLoading(true)
       setError(null)
 
-      // Build query with filters
-      let query = supabase
-        .from('participants')
-        .select('main_activity, opportunity_score, opportunity_level, digital_maturity, city')
-
-      // Apply activity filter
-      if (filters.activity !== 'all') {
-        query = query.eq('main_activity', filters.activity)
+      const params = new URLSearchParams({
+        activity: filters.activity,
+        opportunityLevel: filters.opportunityLevel,
+      })
+      const res = await fetch(`/api/admin/stats?${params}`)
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        throw new Error(body.error || 'Erreur de chargement')
       }
-
-      // Apply opportunity level filter
-      if (filters.opportunityLevel !== 'all') {
-        query = query.eq('opportunity_level', filters.opportunityLevel)
-      }
-
-      // Fetch filtered participants
-      const { data: participants } = await query
-
-      // Fetch total participants (without filters for stats)
-      const { count: totalParticipants } = await supabase
-        .from('participants')
-        .select('*', { count: 'exact', head: true })
-
-      // Fetch challenges count
-      const { data: challengesData } = await supabase
-        .from('challenges')
-        .select('challenge_name')
-
-      // Fetch digital needs count
-      const { data: needsData } = await supabase
-        .from('digital_needs')
-        .select('need_name')
-
-      // Fetch investment intentions
-      const { data: investmentData } = await supabase
-        .from('investment_intention')
-        .select('budget_range, willing_to_invest')
+      const { participants, totalParticipants, challengesData, needsData, investmentData } = await res.json()
 
       if (participants && participants.length > 0) {
         // Calculate stats
@@ -303,8 +269,17 @@ export default function AdminPage() {
           transition={{ duration: 0.8, ease: [0.32, 0.72, 0, 1] }}
           className="mb-16"
         >
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-electric-green/10 border border-electric-green/20 mb-6">
-            <span className="text-[10px] uppercase tracking-[0.2em] font-medium text-electric-green">Market Intelligence</span>
+          <div className="flex items-center justify-between mb-6">
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-electric-green/10 border border-electric-green/20">
+              <span className="text-[10px] uppercase tracking-[0.2em] font-medium text-electric-green">Market Intelligence</span>
+            </div>
+            <button
+              onClick={async () => { await fetch('/api/admin/logout', { method: 'POST' }); window.location.href = '/admin/login' }}
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-black/10 text-deep-black text-sm hover:bg-black/5 transition-all duration-300"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Déconnexion</span>
+            </button>
           </div>
           <h1 className="text-5xl md:text-7xl font-bold text-deep-black mb-4 tracking-tight">
             Dashboard

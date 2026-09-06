@@ -11,6 +11,7 @@ import { ArrowRight } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { SurveyStep } from '@/components/survey-step'
 import { ProgressBar } from '@/components/ui/progress-bar'
+import { supabase } from '@/lib/supabase'
 
 const surveySteps = [
   {
@@ -147,16 +148,45 @@ export default function Home() {
     setShowSurvey(true)
   }
   
-  const handleStepComplete = (selected: string | string[]) => {
-    setResponses(prev => ({ ...prev, [currentStep]: selected }))
-    
+  const handleStepComplete = async (selected: string | string[]) => {
+    const updatedResponses = { ...responses, [currentStep]: selected }
+    setResponses(updatedResponses)
+
     if (currentStep < surveySteps.length - 1) {
       setCurrentStep(prev => prev + 1)
-    } else {
-      // Survey complete - show completion screen
-      setSurveyComplete(true)
-      console.log('Survey complete:', responses)
+      return
     }
+
+    setSurveyComplete(true)
+
+    if (!supabase) {
+      console.error('Supabase non configuré : vérifier .env.local')
+      return
+    }
+
+    const { data, error } = await supabase.rpc('submit_survey', {
+      p_name: null,
+      p_city: null,
+      p_age_range: null,
+      p_main_activity: updatedResponses[0] as string,
+      p_activity_years: null,
+      p_whatsapp: null,
+      p_email: null,
+      p_contact_consent: false,
+      p_acquisition_methods: [updatedResponses[1] as string],
+      p_digital_tools: updatedResponses[2] as string[],
+      p_challenges: [updatedResponses[3] as string],
+      p_digital_needs: [updatedResponses[4] as string],
+      p_willing_to_invest: updatedResponses[5] as string,
+      p_budget_range: null,
+    })
+
+    if (error) {
+      console.error('Erreur soumission sondage:', error)
+      return
+    }
+    // data[0] = { participant_id, opportunity_score, opportunity_level }
+    // à transmettre à SurveyCompletion si on veut afficher un retour personnalisé
   }
   
   const handleBack = () => {
