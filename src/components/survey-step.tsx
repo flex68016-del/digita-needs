@@ -40,10 +40,6 @@ export function SurveyStep({
         ? current.filter(item => item !== id)
         : [...current, id]
       setSelected(newSelected)
-      // Auto-submit on selection for multi-select
-      if (newSelected.length > 0) {
-        onSelect(newSelected)
-      }
     } else {
       setSelected(id)
       onSelect(id)
@@ -155,17 +151,28 @@ export function SurveyStep({
         })}
       </div>
       
-      {multiSelect && (selected as string[]).length > 0 && onBack && (
+      {multiSelect && (selected as string[]).length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ ease: [0.32, 0.72, 0, 1] }}
+          className="flex justify-between items-center"
         >
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="text-graphite hover:text-deep-black transition-colors focus:outline-none focus:ring-2 focus:ring-electric-green rounded px-2 py-1"
+            >
+              Retour
+            </button>
+          )}
+          
           <button
-            onClick={onBack}
-            className="text-graphite hover:text-deep-black transition-colors focus:outline-none focus:ring-2 focus:ring-electric-green rounded px-2 py-1"
+            onClick={handleContinue}
+            className="ml-auto flex items-center gap-2 bg-electric-green text-deep-black px-6 py-3 rounded-full hover:bg-electric-green/90 active:scale-[0.98] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] focus:outline-none focus:ring-2 focus:ring-electric-green focus:ring-offset-2"
           >
-            Retour
+            Continuer
+            <ChevronRight className="w-4 h-4" aria-hidden="true" />
           </button>
         </motion.div>
       )}
