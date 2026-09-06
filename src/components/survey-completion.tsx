@@ -63,7 +63,7 @@ export function SurveyCompletion({ participantId, onFinish }: SurveyCompletionPr
   }
 
   const handleNotInterested = () => {
-    onFinish()
+    window.location.href = 'https://digita-needs.vercel.app/'
   }
   
   const motionProps = reducedMotion ? {
@@ -140,7 +140,7 @@ export function SurveyCompletion({ participantId, onFinish }: SurveyCompletionPr
               size="lg"
               onClick={handleNotInterested}
             >
-              Non, retour à l'accueil
+              Non
             </Button>
           </div>
         </motion.div>
