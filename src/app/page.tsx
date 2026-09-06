@@ -5,11 +5,13 @@ import { Button } from '@/components/ui/button'
 import { NetworkAnimation } from '@/components/network-animation'
 import { StorytellingSection } from '@/components/storytelling-section'
 import { SurveyCompletion } from '@/components/survey-completion'
+import { ProfileIntro } from '@/components/profile-intro'
 import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
 import { ArrowRight } from 'lucide-react'
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { SurveyStep } from '@/components/survey-step'
 import { ProgressBar } from '@/components/ui/progress-bar'
 import { supabase } from '@/lib/supabase'
@@ -134,14 +136,30 @@ const surveySteps = [
       { id: "besoin_info", label: "Je souhaite d'abord en savoir plus" },
       { id: "non", label: "Non" }
     ]
+  },
+  {
+    title: "Quel budget pourriez-vous envisager ?",
+    subtitle: "Pour une solution qui résoudrait ce problème",
+    options: [
+      { id: "lt_25k", label: "< 25 000 FCFA" },
+      { id: "25k_50k", label: "25 000 – 50 000 FCFA" },
+      { id: "50k_100k", label: "50 000 – 100 000 FCFA" },
+      { id: "100k_250k", label: "100 000 – 250 000 FCFA" },
+      { id: "250k_500k", label: "250 000 – 500 000 FCFA" },
+      { id: "gt_500k", label: "+500 000 FCFA" },
+      { id: "unknown", label: "Je ne sais pas" }
+    ]
   }
 ]
 
 export default function Home() {
+  const router = useRouter()
   const [showSurvey, setShowSurvey] = useState(false)
   const [surveyComplete, setSurveyComplete] = useState(false)
   const [currentStep, setCurrentStep] = useState(0)
   const [responses, setResponses] = useState<Record<number, string | string[]>>({})
+  const [profile, setProfile] = useState<{ name: string; city: string; ageRange: string; activityYears: string } | null>(null)
+  const [participantId, setParticipantId] = useState<string | null>(null)
   const reducedMotion = useReducedMotion()
 
   useEffect(() => {
@@ -180,12 +198,11 @@ export default function Home() {
     console.log('Tentative de soumission du sondage avec les réponses:', updatedResponses)
 
     const { data, error } = await supabase.rpc('submit_survey', {
+      p_name: profile?.name || null,
+      p_city: profile?.city || null,
+      p_age_range: profile?.ageRange || null,
       p_main_activity: updatedResponses[0] as string,
-      p_willing_to_invest: updatedResponses[5] as string,
-      p_name: null,
-      p_city: null,
-      p_age_range: null,
-      p_activity_years: null,
+      p_activity_years: profile?.activityYears || null,
       p_whatsapp: null,
       p_email: null,
       p_contact_consent: false,
@@ -193,7 +210,8 @@ export default function Home() {
       p_digital_tools: updatedResponses[2] as string[],
       p_challenges: [updatedResponses[3] as string],
       p_digital_needs: [updatedResponses[4] as string],
-      p_budget_range: null,
+      p_willing_to_invest: updatedResponses[5] as string,
+      p_budget_range: updatedResponses[6] as string,
     })
 
     if (error) {
@@ -203,8 +221,7 @@ export default function Home() {
     }
 
     console.log('Sondage soumis avec succès:', data)
-    // data[0] = { participant_id, opportunity_score, opportunity_level }
-    // à transmettre à SurveyCompletion si on veut afficher un retour personnalisé
+    if (data && data[0]) setParticipantId(data[0].participant_id)
   }
   
   const handleBack = () => {
@@ -214,7 +231,12 @@ export default function Home() {
   }
   
   if (surveyComplete) {
-    return <SurveyCompletion />
+    return (
+      <SurveyCompletion
+        participantId={participantId}
+        onFinish={() => router.push('/')}
+      />
+    )
   }
   
   if (showSurvey) {
@@ -222,17 +244,23 @@ export default function Home() {
       <div className="min-h-[100dvh] bg-off-white flex flex-col">
         <div className="flex-1 flex items-center justify-center p-6">
           <div className="w-full">
-            <ProgressBar current={currentStep + 1} total={surveySteps.length} />
-            
-            <div className="mt-8">
-              <SurveyStep
-                step={currentStep + 1}
-                totalSteps={surveySteps.length}
-                {...surveySteps[currentStep]}
-                onSelect={handleStepComplete}
-                onBack={handleBack}
-              />
-            </div>
+            {!profile ? (
+              <ProfileIntro onComplete={setProfile} />
+            ) : (
+              <>
+                <ProgressBar current={currentStep + 1} total={surveySteps.length} />
+                
+                <div className="mt-8">
+                  <SurveyStep
+                    step={currentStep + 1}
+                    totalSteps={surveySteps.length}
+                    {...surveySteps[currentStep]}
+                    onSelect={handleStepComplete}
+                    onBack={handleBack}
+                  />
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

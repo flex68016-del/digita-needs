@@ -2,10 +2,16 @@
 
 import { motion, useReducedMotion } from 'motion/react'
 import { Button } from '@/components/ui/button'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { CheckCircle2, Mail, Phone } from 'lucide-react'
+import { supabase } from '@/lib/supabase'
 
-export function SurveyCompletion() {
+interface SurveyCompletionProps {
+  participantId: string | null
+  onFinish: () => void
+}
+
+export function SurveyCompletion({ participantId, onFinish }: SurveyCompletionProps) {
   const [showContactForm, setShowContactForm] = useState(false)
   const [contactInfo, setContactInfo] = useState({
     name: '',
@@ -13,12 +19,24 @@ export function SurveyCompletion() {
     email: ''
   })
   const reducedMotion = useReducedMotion()
+
+  useEffect(() => {
+    const timer = setTimeout(() => { if (!showContactForm) onFinish() }, 15000)
+    return () => clearTimeout(timer)
+  }, [showContactForm, onFinish])
   
-  const handleContactSubmit = (e: React.FormEvent) => {
+  const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Here you would save the contact info to Supabase
-    console.log('Contact info submitted:', contactInfo)
-    setShowContactForm(false)
+    if (participantId && supabase) {
+      const { error } = await supabase.rpc('update_contact_info', {
+        p_participant_id: participantId,
+        p_name: contactInfo.name,
+        p_whatsapp: contactInfo.whatsapp,
+        p_email: contactInfo.email,
+      })
+      if (error) console.error(error)
+    }
+    onFinish()
   }
   
   const motionProps = reducedMotion ? {
@@ -77,12 +95,22 @@ export function SurveyCompletion() {
                 Souhaitez-vous être informé lorsqu'une solution correspondant à vos besoins sera disponible ?
               </h3>
               
-              <Button
-                size="lg"
-                onClick={() => setShowContactForm(true)}
-              >
-                Oui, je souhaite être informé
-              </Button>
+              <div className="flex gap-4">
+                <Button
+                  size="lg"
+                  onClick={() => setShowContactForm(true)}
+                >
+                  Oui, je souhaite être informé
+                </Button>
+                
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  onClick={onFinish}
+                >
+                  Retour à l'accueil
+                </Button>
+              </div>
             </motion.div>
           </>
         ) : (

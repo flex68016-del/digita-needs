@@ -64,6 +64,15 @@ interface StatsResponse {
   challengesData: Array<{ challenge_name: string }>
   needsData: Array<{ need_name: string }>
   investmentData: Array<{ budget_range: string | null; willing_to_invest: string }>
+  interestedLeads: Array<{
+    name: string | null
+    whatsapp: string | null
+    email: string | null
+    city: string | null
+    main_activity: string | null
+    opportunity_score: number
+    opportunity_level: string
+  }>
 }
 
 export default function AdminPage() {
@@ -75,6 +84,7 @@ export default function AdminPage() {
   const [digitalNeeds, setDigitalNeeds] = useState<DigitalNeedData[]>([])
   const [budgets, setBudgets] = useState<BudgetData[]>([])
   const [opportunityScores, setOpportunityScores] = useState<OpportunityScoreData[]>([])
+  const [interestedLeads, setInterestedLeads] = useState<StatsResponse['interestedLeads']>([])
   const [filters, setFilters] = useState({
     activity: 'all',
     city: 'all',
@@ -96,7 +106,7 @@ export default function AdminPage() {
         const body = await res.json().catch(() => ({}))
         throw new Error(body.error || 'Erreur de chargement')
       }
-      const { participants, totalParticipants, challengesData, needsData, investmentData }: StatsResponse = await res.json()
+      const { participants, totalParticipants, challengesData, needsData, investmentData, interestedLeads }: StatsResponse = await res.json()
 
       if (participants && participants.length > 0) {
         // Calculate stats
@@ -191,6 +201,10 @@ export default function AdminPage() {
           }
         })
         setBudgets(Array.from(budgetMap.entries()).map(([name, value]) => ({ name, value })))
+      }
+
+      if (interestedLeads) {
+        setInterestedLeads(interestedLeads)
       }
 
     } catch (err) {
@@ -621,6 +635,48 @@ export default function AdminPage() {
                           {item.level === 'high' && 'Priorité haute - lancer solution'}
                           {item.level === 'medium' && 'Étudier le marché'}
                           {item.level === 'low' && 'Surveiller l\'évolution'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Interested Leads Table */}
+        {!loading && !error && interestedLeads.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.32, 0.72, 0, 1], delay: 0.8 }}
+            className="mt-16"
+          >
+            <div className="bg-white rounded-2xl p-8 border border-black/10 shadow-sm">
+              <h3 className="text-xl font-semibold text-deep-black mb-6 tracking-tight">Participants intéressés</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-black/10">
+                      <th className="text-left py-4 px-6 text-sm font-medium text-graphite uppercase tracking-[0.1em]">Nom</th>
+                      <th className="text-left py-4 px-6 text-sm font-medium text-graphite uppercase tracking-[0.1em]">Ville</th>
+                      <th className="text-left py-4 px-6 text-sm font-medium text-graphite uppercase tracking-[0.1em]">Activité</th>
+                      <th className="text-left py-4 px-6 text-sm font-medium text-graphite uppercase tracking-[0.1em]">WhatsApp</th>
+                      <th className="text-left py-4 px-6 text-sm font-medium text-graphite uppercase tracking-[0.1em]">Email</th>
+                      <th className="text-left py-4 px-6 text-sm font-medium text-graphite uppercase tracking-[0.1em]">Score</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {interestedLeads.map((lead, index) => (
+                      <tr key={index} className="border-b border-black/5 hover:bg-black/5 transition-colors duration-300">
+                        <td className="py-4 px-6 font-medium text-deep-black">{lead.name || '-'}</td>
+                        <td className="py-4 px-6 text-sm text-graphite">{lead.city || '-'}</td>
+                        <td className="py-4 px-6 text-sm text-graphite">{lead.main_activity || '-'}</td>
+                        <td className="py-4 px-6 text-sm text-graphite">{lead.whatsapp || '-'}</td>
+                        <td className="py-4 px-6 text-sm text-graphite">{lead.email || '-'}</td>
+                        <td className="py-4 px-6">
+                          {getOpportunityBadge(lead.opportunity_level)}
                         </td>
                       </tr>
                     ))}

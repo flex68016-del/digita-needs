@@ -18,7 +18,7 @@ export interface Database {
           city: string | null
           age_range: string | null
           main_activity: string | null
-          activity_years: number | null
+          activity_years: string | null
           whatsapp: string | null
           email: string | null
           contact_consent: boolean
