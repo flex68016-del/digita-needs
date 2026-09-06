@@ -144,6 +144,22 @@ export function SurveyCompletion({ participantId, onFinish }: SurveyCompletionPr
             </Button>
           </div>
         </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: reducedMotion ? 0 : 0.6 }}
+          className="mt-6"
+        >
+          <Button
+            variant="ghost"
+            size="lg"
+            onClick={handleNotInterested}
+            className="text-graphite hover:text-deep-black"
+          >
+            Retour à l'accueil
+          </Button>
+        </motion.div>
       </motion.div>
     </div>
   )

@@ -21,12 +21,18 @@ export default function PrivacyPage() {
             Nous collectons les informations que vous nous fournissez volontairement lors de votre participation à notre étude sur la digitalisation. Ces informations incluent :
           </p>
           <ul className="list-disc pl-6 text-graphite mb-6">
+            <li>Votre nom (optionnel)</li>
+            <li>Votre numéro WhatsApp (optionnel)</li>
+            <li>Votre adresse email (optionnel)</li>
             <li>Votre activité professionnelle</li>
             <li>Votre secteur d'activité</li>
             <li>Votre localisation géographique</li>
             <li>Vos défis et besoins en matière de digitalisation</li>
             <li>Vos intentions d'investissement dans des solutions numériques</li>
           </ul>
+          <p className="text-graphite mb-6">
+            Les données de contact (nom, WhatsApp, email) sont collectées uniquement si vous consentez à être informé des solutions correspondant à vos besoins.
+          </p>
           
           <h2 className="text-2xl font-semibold text-deep-black mt-8 mb-4">2. Utilisation des données</h2>
           <p className="text-graphite mb-4">
@@ -37,6 +43,7 @@ export default function PrivacyPage() {
             <li>Identifier les opportunités de marché</li>
             <li>Améliorer nos services et solutions</li>
             <li>Générer des statistiques agrégées et anonymisées</li>
+            <li>Vous informer des solutions numériques correspondant à vos besoins (uniquement si vous avez consenti)</li>
           </ul>
           
           <h2 className="text-2xl font-semibold text-deep-black mt-8 mb-4">3. Protection des données</h2>
