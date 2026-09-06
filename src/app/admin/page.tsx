@@ -4,12 +4,12 @@ import { useState, useEffect, useCallback } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Navigation } from '@/components/navigation'
-import { motion } from 'motion/react'
+import { motion, AnimatePresence } from 'motion/react'
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, LineChart, Line
 } from 'recharts'
-import { Download, Filter, TrendingUp, Users, Building, MapPin, Target, AlertCircle, LogOut } from 'lucide-react'
+import { Download, Filter, TrendingUp, Users, Building, MapPin, Target, AlertCircle, LogOut, X } from 'lucide-react'
 
 // Dynamic export to prevent static generation
 export const dynamic = 'force-dynamic'
@@ -106,6 +106,7 @@ export default function AdminPage() {
   const [opportunityScores, setOpportunityScores] = useState<OpportunityScoreData[]>([])
   const [interestedLeads, setInterestedLeads] = useState<StatsResponse['interestedLeads']>([])
   const [detailedResponses, setDetailedResponses] = useState<StatsResponse['detailedResponses']>([])
+  const [selectedParticipant, setSelectedParticipant] = useState<StatsResponse['detailedResponses'][0] | null>(null)
   const [filters, setFilters] = useState({
     activity: 'all',
     city: 'all',
@@ -740,7 +741,11 @@ export default function AdminPage() {
                   </thead>
                   <tbody>
                     {detailedResponses.map((response, index) => (
-                      <tr key={response.id} className="border-b border-black/5 hover:bg-black/5 transition-colors duration-300">
+                      <tr 
+                        key={response.id} 
+                        className="border-b border-black/5 hover:bg-black/5 transition-colors duration-300 cursor-pointer"
+                        onClick={() => setSelectedParticipant(response)}
+                      >
                         <td className="py-4 px-4 font-medium text-deep-black">{response.name || '-'}</td>
                         <td className="py-4 px-4 text-xs text-graphite">
                           {response.whatsapp && <div>📱 {response.whatsapp}</div>}
@@ -783,6 +788,163 @@ export default function AdminPage() {
             </div>
           </motion.div>
         )}
+
+        {/* Participant Details Modal */}
+        <AnimatePresence>
+          {selectedParticipant && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 bg-black/80 backdrop-blur-3xl flex items-center justify-center p-6"
+              onClick={() => setSelectedParticipant(null)}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ type: "spring", damping: 30, stiffness: 300 }}
+                className="bg-white rounded-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-black/10 shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex justify-between items-start mb-6">
+                  <h3 className="text-2xl font-bold text-deep-black">Détails du participant</h3>
+                  <button
+                    onClick={() => setSelectedParticipant(null)}
+                    className="p-2 hover:bg-black/5 rounded-full transition-colors"
+                  >
+                    <X className="w-6 h-6 text-deep-black" />
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Nom</label>
+                      <p className="text-deep-black font-medium">{selectedParticipant.name || '-'}</p>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Ville</label>
+                      <p className="text-deep-black font-medium">{selectedParticipant.city || '-'}</p>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Tranche d'âge</label>
+                      <p className="text-deep-black font-medium">{selectedParticipant.age_range || '-'}</p>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Ancienneté</label>
+                      <p className="text-deep-black font-medium">{selectedParticipant.activity_years || '-'}</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">WhatsApp</label>
+                      <p className="text-deep-black font-medium">{selectedParticipant.whatsapp || '-'}</p>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Email</label>
+                      <p className="text-deep-black font-medium">{selectedParticipant.email || '-'}</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Activité principale</label>
+                    <p className="text-deep-black font-medium">{selectedParticipant.main_activity || '-'}</p>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Outils numériques</label>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedParticipant.digital_tools.length > 0 ? (
+                        selectedParticipant.digital_tools.map((tool, idx) => (
+                          <span key={idx} className="px-3 py-1 bg-electric-green/10 text-electric-green rounded-full text-sm">
+                            {tool.tool_name}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-graphite">-</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Défis</label>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedParticipant.challenges.length > 0 ? (
+                        selectedParticipant.challenges.map((challenge, idx) => (
+                          <span key={idx} className="px-3 py-1 bg-deep-blue/10 text-deep-blue rounded-full text-sm">
+                            {challenge.challenge_name}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-graphite">-</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Besoins numériques</label>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedParticipant.digital_needs.length > 0 ? (
+                        selectedParticipant.digital_needs.map((need, idx) => (
+                          <span key={idx} className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">
+                            {need.need_name}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-graphite">-</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Prêt à investir</label>
+                      <p className="text-deep-black font-medium">
+                        {selectedParticipant.investment_intention[0]?.willing_to_invest || '-'}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Budget</label>
+                      <p className="text-deep-black font-medium">
+                        {selectedParticipant.investment_intention[0]?.budget_range || '-'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-4 pt-4 border-t border-black/10">
+                    <div>
+                      <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Score opportunité</label>
+                      <p className="text-deep-black font-bold text-2xl">{selectedParticipant.opportunity_score}</p>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Niveau</label>
+                      <div className="mt-1">{getOpportunityBadge(selectedParticipant.opportunity_level)}</div>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Maturité digitale</label>
+                      <p className="text-deep-black font-medium">{selectedParticipant.digital_maturity}/10</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Date de création</label>
+                    <p className="text-deep-black font-medium text-sm">
+                      {new Date(selectedParticipant.created_at).toLocaleDateString('fr-FR', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )
