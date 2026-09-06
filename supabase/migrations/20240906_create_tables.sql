@@ -1,7 +1,16 @@
 -- Create tables for the digital needs survey
+-- Run this migration first, then run 20240906_submit_survey_rpc.sql
+
+-- Drop existing tables if they exist (for clean migration)
+DROP TABLE IF EXISTS investment_intention CASCADE;
+DROP TABLE IF EXISTS digital_needs CASCADE;
+DROP TABLE IF EXISTS challenges CASCADE;
+DROP TABLE IF EXISTS digital_tools CASCADE;
+DROP TABLE IF EXISTS acquisition_methods CASCADE;
+DROP TABLE IF EXISTS participants CASCADE;
 
 -- Participants table
-CREATE TABLE IF NOT EXISTS participants (
+CREATE TABLE participants (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT,
   city TEXT,
