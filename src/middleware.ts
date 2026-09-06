@@ -1,16 +1,15 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-
-async function computeSessionToken(password: string): Promise<string> {
-  const data = new TextEncoder().encode(`${password}:admin-session`)
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
-  return Array.from(new Uint8Array(hashBuffer))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('')
-}
+import { computeSessionToken } from '@/lib/auth'
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
+
+  // Enforce HTTPS in production
+  if (process.env.NODE_ENV === 'production' && request.headers.get('x-forwarded-proto') !== 'https') {
+    const httpsUrl = new URL('https://' + request.headers.get('host') + request.url)
+    return NextResponse.redirect(httpsUrl, { status: 301 })
+  }
 
   if (!pathname.startsWith('/admin') && !pathname.startsWith('/api/admin')) {
     return NextResponse.next()
