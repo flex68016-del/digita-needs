@@ -52,6 +52,20 @@ interface OpportunityScoreData {
   level: 'high' | 'medium' | 'low'
 }
 
+interface StatsResponse {
+  participants: Array<{
+    main_activity: string | null
+    opportunity_score: number
+    opportunity_level: string
+    digital_maturity: number
+    city: string | null
+  }>
+  totalParticipants: number
+  challengesData: Array<{ challenge_name: string }>
+  needsData: Array<{ need_name: string }>
+  investmentData: Array<{ budget_range: string | null; willing_to_invest: string }>
+}
+
 export default function AdminPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -82,7 +96,7 @@ export default function AdminPage() {
         const body = await res.json().catch(() => ({}))
         throw new Error(body.error || 'Erreur de chargement')
       }
-      const { participants, totalParticipants, challengesData, needsData, investmentData } = await res.json()
+      const { participants, totalParticipants, challengesData, needsData, investmentData }: StatsResponse = await res.json()
 
       if (participants && participants.length > 0) {
         // Calculate stats
@@ -103,7 +117,7 @@ export default function AdminPage() {
           }
           const budgets = investmentData
             .filter(i => i.budget_range && budgetMap[i.budget_range])
-            .map(i => budgetMap[i.budget_range])
+            .map(i => budgetMap[i.budget_range!])
           budgetAvg = budgets.length > 0 ? budgets.reduce((a, b) => a + b, 0) / budgets.length : 0
         }
 
