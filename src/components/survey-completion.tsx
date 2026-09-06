@@ -18,6 +18,8 @@ export function SurveyCompletion({ participantId, onFinish }: SurveyCompletionPr
     whatsapp: '',
     email: ''
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
   const reducedMotion = useReducedMotion()
 
   useEffect(() => {
@@ -27,16 +29,49 @@ export function SurveyCompletion({ participantId, onFinish }: SurveyCompletionPr
   
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (participantId && supabase) {
-      const { error } = await supabase.rpc('update_contact_info', {
+    setIsSubmitting(true)
+    setSubmitError(null)
+    
+    console.log('Submitting contact info:', { participantId, contactInfo })
+    
+    if (!participantId) {
+      console.error('No participantId provided')
+      setSubmitError('Erreur: ID participant manquant')
+      setIsSubmitting(false)
+      return
+    }
+    
+    if (!supabase) {
+      console.error('Supabase client not configured')
+      setSubmitError('Erreur: connexion Supabase non configurée')
+      setIsSubmitting(false)
+      return
+    }
+    
+    try {
+      const { data, error } = await supabase.rpc('update_contact_info', {
         p_participant_id: participantId,
         p_name: contactInfo.name,
         p_whatsapp: contactInfo.whatsapp,
         p_email: contactInfo.email,
       })
-      if (error) console.error(error)
+      
+      console.log('RPC response:', { data, error })
+      
+      if (error) {
+        console.error('RPC error:', error)
+        setSubmitError(`Erreur: ${error.message}`)
+        setIsSubmitting(false)
+        return
+      }
+      
+      console.log('Contact info updated successfully')
+      onFinish()
+    } catch (err) {
+      console.error('Unexpected error:', err)
+      setSubmitError('Erreur lors de la soumission')
+      setIsSubmitting(false)
     }
-    onFinish()
   }
   
   const motionProps = reducedMotion ? {
@@ -201,16 +236,23 @@ export function SurveyCompletion({ participantId, onFinish }: SurveyCompletionPr
                 </label>
               </div>
               
+              {submitError && (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-sm">
+                  {submitError}
+                </div>
+              )}
+              
               <div className="flex gap-4">
                 <Button
                   type="button"
                   variant="secondary"
                   onClick={() => setShowContactForm(false)}
+                  disabled={isSubmitting}
                 >
                   Annuler
                 </Button>
-                <Button type="submit">
-                  Envoyer
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? 'Envoi...' : 'Envoyer'}
                 </Button>
               </div>
             </motion.form>
