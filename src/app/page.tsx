@@ -196,6 +196,12 @@ export default function Home() {
     }
 
     console.log('Tentative de soumission du sondage avec les réponses:', updatedResponses)
+    console.log('Profile data:', profile)
+    console.log('RPC params:', {
+      p_name: profile?.name || null,
+      p_whatsapp: profile?.whatsapp || null,
+      p_email: profile?.email || null,
+    })
 
     const { data, error } = await supabase.rpc('submit_survey', {
       p_name: profile?.name || null,

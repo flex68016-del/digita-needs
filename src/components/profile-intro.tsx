@@ -77,7 +77,10 @@ export function ProfileIntro({ onComplete }: { onComplete: (data: ProfileData) =
         </div>
       </div>
 
-      <Button className="mt-8" disabled={!canContinue} onClick={() => onComplete({ name, city, ageRange, activityYears, whatsapp, email })}>
+      <Button className="mt-8" disabled={!canContinue} onClick={() => {
+        console.log('Profile data being submitted:', { name, city, ageRange, activityYears, whatsapp, email })
+        onComplete({ name, city, ageRange, activityYears, whatsapp, email })
+      }}>
         Continuer
       </Button>
     </motion.div>
