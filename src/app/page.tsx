@@ -8,11 +8,23 @@ import { SurveyCompletion } from '@/components/survey-completion'
 import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
 import { ArrowRight } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { SurveyStep } from '@/components/survey-step'
 import { ProgressBar } from '@/components/ui/progress-bar'
 import { supabase } from '@/lib/supabase'
+
+function SurveyTrigger({ onSurveyStart }: { onSurveyStart: () => void }) {
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    if (searchParams.get('survey') === 'true') {
+      onSurveyStart()
+    }
+  }, [searchParams, onSurveyStart])
+
+  return null
+}
 
 const surveySteps = [
   {
@@ -131,13 +143,6 @@ export default function Home() {
   const [currentStep, setCurrentStep] = useState(0)
   const [responses, setResponses] = useState<Record<number, string | string[]>>({})
   const reducedMotion = useReducedMotion()
-  const searchParams = useSearchParams()
-
-  useEffect(() => {
-    if (searchParams.get('survey') === 'true') {
-      setShowSurvey(true)
-    }
-  }, [searchParams])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -236,6 +241,9 @@ export default function Home() {
   
   return (
     <main className="min-h-screen bg-off-white">
+      <Suspense fallback={null}>
+        <SurveyTrigger onSurveyStart={() => setShowSurvey(true)} />
+      </Suspense>
       <Navigation />
       
       {/* Hero Section */}
