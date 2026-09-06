@@ -9,6 +9,7 @@ import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
 import { ArrowRight } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { SurveyStep } from '@/components/survey-step'
 import { ProgressBar } from '@/components/ui/progress-bar'
 import { supabase } from '@/lib/supabase'
@@ -130,7 +131,14 @@ export default function Home() {
   const [currentStep, setCurrentStep] = useState(0)
   const [responses, setResponses] = useState<Record<number, string | string[]>>({})
   const reducedMotion = useReducedMotion()
-  
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    if (searchParams.get('survey') === 'true') {
+      setShowSurvey(true)
+    }
+  }, [searchParams])
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (showSurvey && !surveyComplete) {
@@ -139,7 +147,7 @@ export default function Home() {
         }
       }
     }
-    
+
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [showSurvey, surveyComplete, currentStep])
@@ -164,6 +172,8 @@ export default function Home() {
       return
     }
 
+    console.log('Tentative de soumission du sondage avec les réponses:', updatedResponses)
+
     const { data, error } = await supabase.rpc('submit_survey', {
       p_name: null,
       p_city: null,
@@ -183,8 +193,11 @@ export default function Home() {
 
     if (error) {
       console.error('Erreur soumission sondage:', error)
+      console.error('Détails de l\'erreur:', error.message, error.hint, error.code)
       return
     }
+
+    console.log('Sondage soumis avec succès:', data)
     // data[0] = { participant_id, opportunity_score, opportunity_level }
     // à transmettre à SurveyCompletion si on veut afficher un retour personnalisé
   }

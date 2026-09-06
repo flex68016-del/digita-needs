@@ -42,7 +42,7 @@ export function Navigation() {
             
             <div className="hidden md:block">
               <Link
-                href="/"
+                href="/?survey=true"
                 className="px-6 py-2 rounded-full bg-electric-green text-deep-black text-sm font-medium hover:bg-electric-green/90 active:scale-[0.98] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] inline-block"
               >
                 Participer
@@ -108,7 +108,7 @@ export function Navigation() {
                   className="pt-6"
                 >
                   <Link
-                    href="/"
+                    href="/?survey=true"
                     onClick={() => setIsOpen(false)}
                     className="w-full px-8 py-4 rounded-full bg-electric-green text-deep-black text-lg font-medium hover:bg-electric-green/90 active:scale-[0.98] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] inline-block text-center"
                   >
