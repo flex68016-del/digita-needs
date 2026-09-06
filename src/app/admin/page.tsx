@@ -16,6 +16,71 @@ export const dynamic = 'force-dynamic'
 
 const COLORS = ['#18C77A', '#3157FF', '#6B7280', '#F59E0B', '#EF4444']
 
+// Mapping IDs to labels for display
+const digitalToolsLabels: Record<string, string> = {
+  whatsapp_business: 'WhatsApp Business',
+  facebook: 'Facebook',
+  instagram: 'Instagram',
+  tiktok: 'TikTok',
+  site_web: 'Site web',
+  google_business: 'Google Business',
+  boutique_en_ligne: 'Boutique en ligne',
+  logiciel_gestion: 'Logiciel de gestion',
+  crm: 'CRM',
+  comptabilite: 'Comptabilité',
+  facturation: 'Facturation',
+  paiement_en_ligne: 'Paiement en ligne',
+  ia: 'Intelligence artificielle',
+  aucun: 'Aucun'
+}
+
+const challengesLabels: Record<string, string> = {
+  trouver_clients: 'Trouver des clients',
+  fideliser: 'Fidéliser les clients',
+  faire_connaitre: 'Faire connaître mon activité',
+  gerer_commandes: 'Gérer les commandes',
+  gerer_stocks: 'Gérer les stocks',
+  gerer_finances: 'Gérer mes finances',
+  factures: 'Faire mes factures',
+  organiser_equipe: 'Organiser mon équipe',
+  communiquer: 'Communiquer avec les clients',
+  recevoir_paiements: 'Recevoir les paiements',
+  visible_internet: 'Être visible sur Internet',
+  gagner_temps: 'Gagner du temps',
+  outils_numeriques: 'Je ne sais pas utiliser les outils numériques',
+  autre: 'Autre'
+}
+
+const needsLabels: Record<string, string> = {
+  site_internet: 'Site internet',
+  boutique_en_ligne: 'Boutique en ligne',
+  application_mobile: 'Application mobile',
+  gestion_clients: 'Gestion clients',
+  gestion_stocks: 'Gestion stocks',
+  facturation: 'Facturation',
+  comptabilite: 'Comptabilité',
+  reservation: 'Réservation',
+  paiement_en_ligne: 'Paiement en ligne',
+  marketing_digital: 'Marketing digital',
+  gestion_reseaux_sociaux: 'Gestion réseaux sociaux',
+  automatisation: 'Automatisation',
+  ia: 'Intelligence artificielle',
+  formation: 'Formation numérique'
+}
+
+const acquisitionLabels: Record<string, string> = {
+  bouche_a_oreille: 'Bouche-à-oreille',
+  whatsapp: 'WhatsApp',
+  facebook: 'Facebook',
+  instagram: 'Instagram',
+  tiktok: 'TikTok',
+  google: 'Google',
+  site_internet: 'Site internet',
+  boutique_physique: 'Boutique physique',
+  agents: 'Agents/Commerciaux',
+  autre: 'Autre'
+}
+
 interface Stats {
   totalParticipants: number
   totalActivities: number
@@ -755,13 +820,13 @@ export default function AdminPage() {
                         <td className="py-4 px-4 text-xs text-graphite">{response.city || '-'}</td>
                         <td className="py-4 px-4 text-xs text-graphite">{response.main_activity || '-'}</td>
                         <td className="py-4 px-4 text-xs text-graphite max-w-xs truncate">
-                          {response.digital_tools.map(t => t.tool_name).join(', ') || '-'}
+                          {response.digital_tools.map(t => digitalToolsLabels[t.tool_name] || t.tool_name).join(', ') || '-'}
                         </td>
                         <td className="py-4 px-4 text-xs text-graphite max-w-xs truncate">
-                          {response.challenges.map(c => c.challenge_name).join(', ') || '-'}
+                          {response.challenges.map(c => challengesLabels[c.challenge_name] || c.challenge_name).join(', ') || '-'}
                         </td>
                         <td className="py-4 px-4 text-xs text-graphite max-w-xs truncate">
-                          {response.digital_needs.map(n => n.need_name).join(', ') || '-'}
+                          {response.digital_needs.map(n => needsLabels[n.need_name] || n.need_name).join(', ') || '-'}
                         </td>
                         <td className="py-4 px-4 text-xs text-graphite">
                           {response.investment_intention[0]?.budget_range || '-'}
@@ -859,7 +924,7 @@ export default function AdminPage() {
                       {selectedParticipant.digital_tools.length > 0 ? (
                         selectedParticipant.digital_tools.map((tool, idx) => (
                           <span key={idx} className="px-3 py-1 bg-electric-green/10 text-electric-green rounded-full text-sm">
-                            {tool.tool_name}
+                            {digitalToolsLabels[tool.tool_name] || tool.tool_name}
                           </span>
                         ))
                       ) : (
@@ -874,7 +939,7 @@ export default function AdminPage() {
                       {selectedParticipant.challenges.length > 0 ? (
                         selectedParticipant.challenges.map((challenge, idx) => (
                           <span key={idx} className="px-3 py-1 bg-deep-blue/10 text-deep-blue rounded-full text-sm">
-                            {challenge.challenge_name}
+                            {challengesLabels[challenge.challenge_name] || challenge.challenge_name}
                           </span>
                         ))
                       ) : (
@@ -889,7 +954,7 @@ export default function AdminPage() {
                       {selectedParticipant.digital_needs.length > 0 ? (
                         selectedParticipant.digital_needs.map((need, idx) => (
                           <span key={idx} className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">
-                            {need.need_name}
+                            {needsLabels[need.need_name] || need.need_name}
                           </span>
                         ))
                       ) : (
