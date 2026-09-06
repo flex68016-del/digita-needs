@@ -232,17 +232,14 @@ RETURNS INTEGER AS $$
 DECLARE
   tool_count INTEGER;
 BEGIN
-  SELECT COUNT(*) INTO tool_count 
-  FROM digital_tools 
+  SELECT COUNT(*) INTO tool_count
+  FROM digital_tools
   WHERE participant_id = participant_id;
-  
+
   -- Simple maturity score based on tool count
   RETURN tool_count;
 END;
 $$ LANGUAGE plpgsql;
 
--- Trigger to update digital maturity
-CREATE TRIGGER trigger_update_digital_maturity
-  BEFORE INSERT OR UPDATE ON participants
-  FOR EACH ROW
-  EXECUTE FUNCTION calculate_digital_maturity(NEW.id);
+-- Note: digital_maturity is calculated in the submit_survey RPC function
+-- No trigger needed as it's set during insertion
