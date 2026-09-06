@@ -55,7 +55,16 @@ export async function GET(request: NextRequest) {
       supabaseAdmin.from('challenges').select('challenge_name'),
       supabaseAdmin.from('digital_needs').select('need_name'),
       supabaseAdmin.from('investment_intention').select('budget_range, willing_to_invest'),
-      supabaseAdmin.from('participants').select('name, whatsapp, email, city, main_activity, opportunity_score, opportunity_level').eq('contact_consent', true).order('created_at', { ascending: false }),
+      supabaseAdmin.from('participants').select(`
+        name,
+        whatsapp,
+        email,
+        city,
+        main_activity,
+        opportunity_score,
+        opportunity_level,
+        contact(name, whatsapp, email)
+      `).eq('contact_consent', true).order('created_at', { ascending: false }),
       supabaseAdmin
         .from('participants')
         .select(`
@@ -72,6 +81,7 @@ export async function GET(request: NextRequest) {
           opportunity_level,
           digital_maturity,
           created_at,
+          contact(name, whatsapp, email),
           digital_tools(tool_name),
           challenges(challenge_name),
           digital_needs(need_name),

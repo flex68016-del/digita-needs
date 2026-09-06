@@ -180,6 +180,11 @@ interface StatsResponse {
     main_activity: string | null
     opportunity_score: number
     opportunity_level: string
+    contact?: {
+      name: string | null
+      whatsapp: string | null
+      email: string | null
+    }
   }>
   detailedResponses: Array<{
     id: string
@@ -195,6 +200,11 @@ interface StatsResponse {
     opportunity_level: string
     digital_maturity: number
     created_at: string
+    contact?: {
+      name: string | null
+      whatsapp: string | null
+      email: string | null
+    }
     digital_tools: Array<{ tool_name: string }>
     challenges: Array<{ challenge_name: string }>
     digital_needs: Array<{ need_name: string }>
@@ -804,11 +814,11 @@ export default function AdminPage() {
                   <tbody>
                     {interestedLeads.map((lead, index) => (
                       <tr key={index} className="border-b border-black/5 hover:bg-black/5 transition-colors duration-300">
-                        <td className="py-4 px-6 font-medium text-deep-black">{lead.name || '-'}</td>
+                        <td className="py-4 px-6 font-medium text-deep-black">{lead.contact?.name || lead.name || '-'}</td>
                         <td className="py-4 px-6 text-sm text-graphite">{lead.city || '-'}</td>
                         <td className="py-4 px-6 text-sm text-graphite">{lead.main_activity || '-'}</td>
-                        <td className="py-4 px-6 text-sm text-graphite">{lead.whatsapp || '-'}</td>
-                        <td className="py-4 px-6 text-sm text-graphite">{lead.email || '-'}</td>
+                        <td className="py-4 px-6 text-sm text-graphite">{lead.contact?.whatsapp || lead.whatsapp || '-'}</td>
+                        <td className="py-4 px-6 text-sm text-graphite">{lead.contact?.email || lead.email || '-'}</td>
                         <td className="py-4 px-6">
                           {getOpportunityBadge(lead.opportunity_level)}
                         </td>
@@ -854,11 +864,11 @@ export default function AdminPage() {
                         className="border-b border-black/5 hover:bg-black/5 transition-colors duration-300 cursor-pointer"
                         onClick={() => setSelectedParticipant(response)}
                       >
-                        <td className="py-4 px-4 font-medium text-deep-black">{response.name || '-'}</td>
+                        <td className="py-4 px-4 font-medium text-deep-black">{response.contact?.name || response.name || '-'}</td>
                         <td className="py-4 px-4 text-xs text-graphite">
-                          {response.whatsapp && <div>📱 {response.whatsapp}</div>}
-                          {response.email && <div>✉️ {response.email}</div>}
-                          {!response.whatsapp && !response.email && '-'}
+                          {(response.contact?.whatsapp || response.whatsapp) && <div>📱 {response.contact?.whatsapp || response.whatsapp}</div>}
+                          {(response.contact?.email || response.email) && <div>✉️ {response.contact?.email || response.email}</div>}
+                          {!response.contact?.whatsapp && !response.whatsapp && !response.contact?.email && !response.email && '-'}
                         </td>
                         <td className="py-4 px-4 text-xs text-graphite">{response.city || '-'}</td>
                         <td className="py-4 px-4 text-xs text-graphite">{activityLabels[response.main_activity || ''] || response.main_activity || '-'}</td>
@@ -929,7 +939,7 @@ export default function AdminPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Nom</label>
-                      <p className="text-deep-black font-medium">{selectedParticipant.name || '-'}</p>
+                      <p className="text-deep-black font-medium">{selectedParticipant.contact?.name || selectedParticipant.name || '-'}</p>
                     </div>
                     <div>
                       <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Ville</label>
@@ -948,11 +958,11 @@ export default function AdminPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">WhatsApp</label>
-                      <p className="text-deep-black font-medium">{selectedParticipant.whatsapp || '-'}</p>
+                      <p className="text-deep-black font-medium">{selectedParticipant.contact?.whatsapp || selectedParticipant.whatsapp || '-'}</p>
                     </div>
                     <div>
                       <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Email</label>
-                      <p className="text-deep-black font-medium">{selectedParticipant.email || '-'}</p>
+                      <p className="text-deep-black font-medium">{selectedParticipant.contact?.email || selectedParticipant.email || '-'}</p>
                     </div>
                   </div>
 
