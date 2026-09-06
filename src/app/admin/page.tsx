@@ -367,10 +367,10 @@ export default function AdminPage() {
   useEffect(() => {
     fetchData()
     
-    // Auto-refresh every 15 seconds
+    // Auto-refresh every 3 minutes
     const interval = setInterval(() => {
       fetchData()
-    }, 15000)
+    }, 180000)
     
     return () => clearInterval(interval)
   }, [fetchData])
