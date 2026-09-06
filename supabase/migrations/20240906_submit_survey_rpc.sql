@@ -2,10 +2,11 @@
 -- This function handles survey submission and stores data in multiple tables
 
 CREATE OR REPLACE FUNCTION submit_survey(
+  p_main_activity TEXT,
+  p_willing_to_invest TEXT,
   p_name TEXT DEFAULT NULL,
   p_city TEXT DEFAULT NULL,
   p_age_range TEXT DEFAULT NULL,
-  p_main_activity TEXT,
   p_activity_years INTEGER DEFAULT NULL,
   p_whatsapp TEXT DEFAULT NULL,
   p_email TEXT DEFAULT NULL,
@@ -14,7 +15,6 @@ CREATE OR REPLACE FUNCTION submit_survey(
   p_digital_tools TEXT[] DEFAULT ARRAY[]::TEXT[],
   p_challenges TEXT[] DEFAULT ARRAY[]::TEXT[],
   p_digital_needs TEXT[] DEFAULT ARRAY[]::TEXT[],
-  p_willing_to_invest TEXT,
   p_budget_range TEXT DEFAULT NULL
 )
 RETURNS TABLE (
