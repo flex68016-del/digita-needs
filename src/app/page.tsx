@@ -158,7 +158,7 @@ export default function Home() {
   const [surveyComplete, setSurveyComplete] = useState(false)
   const [currentStep, setCurrentStep] = useState(0)
   const [responses, setResponses] = useState<Record<number, string | string[]>>({})
-  const [profile, setProfile] = useState<{ name: string; city: string; ageRange: string; activityYears: string } | null>(null)
+  const [profile, setProfile] = useState<{ name: string; city: string; ageRange: string; activityYears: string; whatsapp: string; email: string } | null>(null)
   const [participantId, setParticipantId] = useState<string | null>(null)
   const reducedMotion = useReducedMotion()
 
@@ -203,8 +203,8 @@ export default function Home() {
       p_age_range: profile?.ageRange || null,
       p_main_activity: updatedResponses[0] as string,
       p_activity_years: profile?.activityYears || null,
-      p_whatsapp: null,
-      p_email: null,
+      p_whatsapp: profile?.whatsapp || null,
+      p_email: profile?.email || null,
       p_contact_consent: false,
       p_acquisition_methods: [updatedResponses[1] as string],
       p_digital_tools: updatedResponses[2] as string[],

@@ -48,6 +48,7 @@ export async function GET(request: NextRequest) {
       { data: needsData },
       { data: investmentData },
       { data: interestedLeads },
+      { data: detailedResponses },
     ] = await Promise.all([
       query,
       supabaseAdmin.from('participants').select('*', { count: 'exact', head: true }),
@@ -55,6 +56,29 @@ export async function GET(request: NextRequest) {
       supabaseAdmin.from('digital_needs').select('need_name'),
       supabaseAdmin.from('investment_intention').select('budget_range, willing_to_invest'),
       supabaseAdmin.from('participants').select('name, whatsapp, email, city, main_activity, opportunity_score, opportunity_level').eq('contact_consent', true).order('created_at', { ascending: false }),
+      supabaseAdmin
+        .from('participants')
+        .select(`
+          id,
+          name,
+          city,
+          age_range,
+          main_activity,
+          activity_years,
+          whatsapp,
+          email,
+          contact_consent,
+          opportunity_score,
+          opportunity_level,
+          digital_maturity,
+          created_at,
+          digital_tools(tool_name),
+          challenges(challenge_name),
+          digital_needs(need_name),
+          acquisition_methods(method_name),
+          investment_intention(willing_to_invest, budget_range)
+        `)
+        .order('created_at', { ascending: false }),
     ])
 
     console.log('[Stats API] Participants error:', participantsError)
@@ -73,6 +97,7 @@ export async function GET(request: NextRequest) {
       needsData: needsData || [],
       investmentData: investmentData || [],
       interestedLeads: interestedLeads || [],
+      detailedResponses: detailedResponses || [],
     })
   } catch (error) {
     console.error('[Stats API] Unexpected error:', error)

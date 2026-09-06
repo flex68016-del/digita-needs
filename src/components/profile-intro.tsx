@@ -2,12 +2,15 @@
 import { useState } from 'react'
 import { motion } from 'motion/react'
 import { Button } from '@/components/ui/button'
+import { Phone, Mail } from 'lucide-react'
 
 interface ProfileData {
   name: string
   city: string
   ageRange: string
   activityYears: string
+  whatsapp: string
+  email: string
 }
 
 export function ProfileIntro({ onComplete }: { onComplete: (data: ProfileData) => void }) {
@@ -15,6 +18,8 @@ export function ProfileIntro({ onComplete }: { onComplete: (data: ProfileData) =
   const [city, setCity] = useState('')
   const [ageRange, setAgeRange] = useState('')
   const [activityYears, setActivityYears] = useState('')
+  const [whatsapp, setWhatsapp] = useState('')
+  const [email, setEmail] = useState('')
   const canContinue = city.trim().length > 0 && ageRange && activityYears
 
   const inputClass = "w-full px-4 py-3 rounded-xl bg-white border border-black/10 text-deep-black focus:outline-none focus:ring-2 focus:ring-electric-green"
@@ -56,9 +61,23 @@ export function ProfileIntro({ onComplete }: { onComplete: (data: ProfileData) =
             <option value="gt_10">Plus de 10 ans</option>
           </select>
         </div>
+        <div>
+          <label className="block text-sm font-medium text-graphite mb-2">WhatsApp (facultatif)</label>
+          <div className="relative">
+            <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-graphite" aria-hidden="true" />
+            <input type="tel" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} className={inputClass + " pl-12"} placeholder="+228 XX XX XX XX" />
+          </div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-graphite mb-2">Email (facultatif)</label>
+          <div className="relative">
+            <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-graphite" aria-hidden="true" />
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass + " pl-12"} placeholder="votre@email.com" />
+          </div>
+        </div>
       </div>
 
-      <Button className="mt-8" disabled={!canContinue} onClick={() => onComplete({ name, city, ageRange, activityYears })}>
+      <Button className="mt-8" disabled={!canContinue} onClick={() => onComplete({ name, city, ageRange, activityYears, whatsapp, email })}>
         Continuer
       </Button>
     </motion.div>

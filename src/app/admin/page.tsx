@@ -73,6 +73,26 @@ interface StatsResponse {
     opportunity_score: number
     opportunity_level: string
   }>
+  detailedResponses: Array<{
+    id: string
+    name: string | null
+    city: string | null
+    age_range: string | null
+    main_activity: string | null
+    activity_years: string | null
+    whatsapp: string | null
+    email: string | null
+    contact_consent: boolean
+    opportunity_score: number
+    opportunity_level: string
+    digital_maturity: number
+    created_at: string
+    digital_tools: Array<{ tool_name: string }>
+    challenges: Array<{ challenge_name: string }>
+    digital_needs: Array<{ need_name: string }>
+    acquisition_methods: Array<{ method_name: string }>
+    investment_intention: Array<{ willing_to_invest: string | null; budget_range: string | null }>
+  }>
 }
 
 export default function AdminPage() {
@@ -85,6 +105,7 @@ export default function AdminPage() {
   const [budgets, setBudgets] = useState<BudgetData[]>([])
   const [opportunityScores, setOpportunityScores] = useState<OpportunityScoreData[]>([])
   const [interestedLeads, setInterestedLeads] = useState<StatsResponse['interestedLeads']>([])
+  const [detailedResponses, setDetailedResponses] = useState<StatsResponse['detailedResponses']>([])
   const [filters, setFilters] = useState({
     activity: 'all',
     city: 'all',
@@ -106,7 +127,7 @@ export default function AdminPage() {
         const body = await res.json().catch(() => ({}))
         throw new Error(body.error || 'Erreur de chargement')
       }
-      const { participants, totalParticipants, challengesData, needsData, investmentData, interestedLeads }: StatsResponse = await res.json()
+      const { participants, totalParticipants, challengesData, needsData, investmentData, interestedLeads, detailedResponses }: StatsResponse = await res.json()
 
       if (participants && participants.length > 0) {
         // Calculate stats
@@ -205,6 +226,10 @@ export default function AdminPage() {
 
       if (interestedLeads) {
         setInterestedLeads(interestedLeads)
+      }
+
+      if (detailedResponses) {
+        setDetailedResponses(detailedResponses)
       }
 
     } catch (err) {
@@ -677,6 +702,78 @@ export default function AdminPage() {
                         <td className="py-4 px-6 text-sm text-graphite">{lead.email || '-'}</td>
                         <td className="py-4 px-6">
                           {getOpportunityBadge(lead.opportunity_level)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Detailed Responses Table */}
+        {!loading && !error && detailedResponses.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.32, 0.72, 0, 1], delay: 1 }}
+            className="mt-16"
+          >
+            <div className="bg-white rounded-2xl p-8 border border-black/10 shadow-sm">
+              <h3 className="text-xl font-semibold text-deep-black mb-6 tracking-tight">Réponses détaillées des participants</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-black/10">
+                      <th className="text-left py-4 px-4 text-xs font-medium text-graphite uppercase tracking-[0.1em]">Nom</th>
+                      <th className="text-left py-4 px-4 text-xs font-medium text-graphite uppercase tracking-[0.1em]">Contact</th>
+                      <th className="text-left py-4 px-4 text-xs font-medium text-graphite uppercase tracking-[0.1em]">Ville</th>
+                      <th className="text-left py-4 px-4 text-xs font-medium text-graphite uppercase tracking-[0.1em]">Activité</th>
+                      <th className="text-left py-4 px-4 text-xs font-medium text-graphite uppercase tracking-[0.1em]">Outils numériques</th>
+                      <th className="text-left py-4 px-4 text-xs font-medium text-graphite uppercase tracking-[0.1em]">Défis</th>
+                      <th className="text-left py-4 px-4 text-xs font-medium text-graphite uppercase tracking-[0.1em]">Besoins</th>
+                      <th className="text-left py-4 px-4 text-xs font-medium text-graphite uppercase tracking-[0.1em]">Budget</th>
+                      <th className="text-left py-4 px-4 text-xs font-medium text-graphite uppercase tracking-[0.1em]">Intérêt</th>
+                      <th className="text-left py-4 px-4 text-xs font-medium text-graphite uppercase tracking-[0.1em]">Score</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {detailedResponses.map((response, index) => (
+                      <tr key={response.id} className="border-b border-black/5 hover:bg-black/5 transition-colors duration-300">
+                        <td className="py-4 px-4 font-medium text-deep-black">{response.name || '-'}</td>
+                        <td className="py-4 px-4 text-xs text-graphite">
+                          {response.whatsapp && <div>📱 {response.whatsapp}</div>}
+                          {response.email && <div>✉️ {response.email}</div>}
+                          {!response.whatsapp && !response.email && '-'}
+                        </td>
+                        <td className="py-4 px-4 text-xs text-graphite">{response.city || '-'}</td>
+                        <td className="py-4 px-4 text-xs text-graphite">{response.main_activity || '-'}</td>
+                        <td className="py-4 px-4 text-xs text-graphite max-w-xs truncate">
+                          {response.digital_tools.map(t => t.tool_name).join(', ') || '-'}
+                        </td>
+                        <td className="py-4 px-4 text-xs text-graphite max-w-xs truncate">
+                          {response.challenges.map(c => c.challenge_name).join(', ') || '-'}
+                        </td>
+                        <td className="py-4 px-4 text-xs text-graphite max-w-xs truncate">
+                          {response.digital_needs.map(n => n.need_name).join(', ') || '-'}
+                        </td>
+                        <td className="py-4 px-4 text-xs text-graphite">
+                          {response.investment_intention[0]?.budget_range || '-'}
+                        </td>
+                        <td className="py-4 px-4">
+                          {response.contact_consent ? (
+                            <span className="inline-flex items-center px-3 py-1 rounded-full bg-electric-green/10 text-electric-green text-xs font-medium">
+                              Oui
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-xs font-medium">
+                              Non
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-4 px-4">
+                          {getOpportunityBadge(response.opportunity_level)}
                         </td>
                       </tr>
                     ))}
