@@ -203,7 +203,7 @@ export default function Home() {
       p_email: profile?.email || null,
     })
 
-    const { data, error } = await supabase.rpc('submit_survey', {
+    const { data, error } = await supabase.rpc('submit_survey_v2', {
       p_name: profile?.name || null,
       p_city: profile?.city || null,
       p_age_range: profile?.ageRange || null,
