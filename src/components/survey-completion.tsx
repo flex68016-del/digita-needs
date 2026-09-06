@@ -61,6 +61,10 @@ export function SurveyCompletion({ participantId, onFinish }: SurveyCompletionPr
       setIsSubmitting(false)
     }
   }
+
+  const handleNotInterested = () => {
+    onFinish()
+  }
   
   const motionProps = reducedMotion ? {
     initial: { opacity: 0 },
@@ -134,7 +138,7 @@ export function SurveyCompletion({ participantId, onFinish }: SurveyCompletionPr
             <Button
               variant="secondary"
               size="lg"
-              onClick={onFinish}
+              onClick={handleNotInterested}
             >
               Non, retour à l'accueil
             </Button>

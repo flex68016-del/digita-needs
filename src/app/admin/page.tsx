@@ -180,11 +180,11 @@ interface StatsResponse {
     main_activity: string | null
     opportunity_score: number
     opportunity_level: string
-    contact?: {
+    contact?: Array<{
       name: string | null
       whatsapp: string | null
       email: string | null
-    }
+    }>
   }>
   detailedResponses: Array<{
     id: string
@@ -200,11 +200,11 @@ interface StatsResponse {
     opportunity_level: string
     digital_maturity: number
     created_at: string
-    contact?: {
+    contact?: Array<{
       name: string | null
       whatsapp: string | null
       email: string | null
-    }
+    }>
     digital_tools: Array<{ tool_name: string }>
     challenges: Array<{ challenge_name: string }>
     digital_needs: Array<{ need_name: string }>
@@ -231,6 +231,11 @@ export default function AdminPage() {
     budget: 'all',
     opportunityLevel: 'all'
   })
+
+  // Helper function to safely get contact data
+  const getContactData = (contact?: Array<{ name: string | null; whatsapp: string | null; email: string | null }>) => {
+    return contact?.[0] || { name: null, whatsapp: null, email: null }
+  }
   
   const fetchData = useCallback(async () => {
     try {
@@ -361,6 +366,13 @@ export default function AdminPage() {
 
   useEffect(() => {
     fetchData()
+    
+    // Auto-refresh every 15 seconds
+    const interval = setInterval(() => {
+      fetchData()
+    }, 15000)
+    
+    return () => clearInterval(interval)
   }, [fetchData])
 
   const exportData = (format: 'csv' | 'excel' | 'json') => {
@@ -812,18 +824,21 @@ export default function AdminPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {interestedLeads.map((lead, index) => (
-                      <tr key={index} className="border-b border-black/5 hover:bg-black/5 transition-colors duration-300">
-                        <td className="py-4 px-6 font-medium text-deep-black">{lead.contact?.name || lead.name || '-'}</td>
-                        <td className="py-4 px-6 text-sm text-graphite">{lead.city || '-'}</td>
-                        <td className="py-4 px-6 text-sm text-graphite">{lead.main_activity || '-'}</td>
-                        <td className="py-4 px-6 text-sm text-graphite">{lead.contact?.whatsapp || lead.whatsapp || '-'}</td>
-                        <td className="py-4 px-6 text-sm text-graphite">{lead.contact?.email || lead.email || '-'}</td>
-                        <td className="py-4 px-6">
-                          {getOpportunityBadge(lead.opportunity_level)}
-                        </td>
-                      </tr>
-                    ))}
+                    {interestedLeads.map((lead, index) => {
+                      const contactData = getContactData(lead.contact)
+                      return (
+                        <tr key={index} className="border-b border-black/5 hover:bg-black/5 transition-colors duration-300">
+                          <td className="py-4 px-6 font-medium text-deep-black">{contactData.name || lead.name || '-'}</td>
+                          <td className="py-4 px-6 text-sm text-graphite">{lead.city || '-'}</td>
+                          <td className="py-4 px-6 text-sm text-graphite">{lead.main_activity || '-'}</td>
+                          <td className="py-4 px-6 text-sm text-graphite">{contactData.whatsapp || lead.whatsapp || '-'}</td>
+                          <td className="py-4 px-6 text-sm text-graphite">{contactData.email || lead.email || '-'}</td>
+                          <td className="py-4 px-6">
+                            {getOpportunityBadge(lead.opportunity_level)}
+                          </td>
+                        </tr>
+                      )
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -864,11 +879,11 @@ export default function AdminPage() {
                         className="border-b border-black/5 hover:bg-black/5 transition-colors duration-300 cursor-pointer"
                         onClick={() => setSelectedParticipant(response)}
                       >
-                        <td className="py-4 px-4 font-medium text-deep-black">{response.contact?.name || response.name || '-'}</td>
+                        <td className="py-4 px-4 font-medium text-deep-black">{response.contact?.[0]?.name || response.name || '-'}</td>
                         <td className="py-4 px-4 text-xs text-graphite">
-                          {(response.contact?.whatsapp || response.whatsapp) && <div>📱 {response.contact?.whatsapp || response.whatsapp}</div>}
-                          {(response.contact?.email || response.email) && <div>✉️ {response.contact?.email || response.email}</div>}
-                          {!response.contact?.whatsapp && !response.whatsapp && !response.contact?.email && !response.email && '-'}
+                          {(response.contact?.[0]?.whatsapp || response.whatsapp) && <div>📱 {response.contact?.[0]?.whatsapp || response.whatsapp}</div>}
+                          {(response.contact?.[0]?.email || response.email) && <div>✉️ {response.contact?.[0]?.email || response.email}</div>}
+                          {!response.contact?.[0]?.whatsapp && !response.whatsapp && !response.contact?.[0]?.email && !response.email && '-'}
                         </td>
                         <td className="py-4 px-4 text-xs text-graphite">{response.city || '-'}</td>
                         <td className="py-4 px-4 text-xs text-graphite">{activityLabels[response.main_activity || ''] || response.main_activity || '-'}</td>
@@ -884,15 +899,11 @@ export default function AdminPage() {
                         <td className="py-4 px-4 text-xs text-graphite">
                           {response.investment_intention[0]?.budget_range || '-'}
                         </td>
-                        <td className="py-4 px-4">
+                        <td className="py-4 px-4 text-xs text-graphite">
                           {response.contact_consent ? (
-                            <span className="inline-flex items-center px-3 py-1 rounded-full bg-electric-green/10 text-electric-green text-xs font-medium">
-                              Oui
-                            </span>
+                            <span className="px-2 py-1 bg-electric-green/10 text-electric-green rounded-full text-xs">Oui</span>
                           ) : (
-                            <span className="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-xs font-medium">
-                              Non
-                            </span>
+                            <span className="px-2 py-1 bg-black/5 text-graphite rounded-full text-xs">Non</span>
                           )}
                         </td>
                         <td className="py-4 px-4">
@@ -936,45 +947,52 @@ export default function AdminPage() {
                 </div>
 
                 <div className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Nom</label>
-                      <p className="text-deep-black font-medium">{selectedParticipant.contact?.name || selectedParticipant.name || '-'}</p>
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Ville</label>
-                      <p className="text-deep-black font-medium">{selectedParticipant.city || '-'}</p>
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Tranche d'âge</label>
-                      <p className="text-deep-black font-medium">{selectedParticipant.age_range || '-'}</p>
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Ancienneté</label>
-                      <p className="text-deep-black font-medium">{activityYearsLabels[selectedParticipant.activity_years || ''] || selectedParticipant.activity_years || '-'}</p>
-                    </div>
-                  </div>
+                  {selectedParticipant && (() => {
+                    const contactData = getContactData(selectedParticipant.contact)
+                    return (
+                      <>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Nom</label>
+                            <p className="text-deep-black font-medium">{contactData.name || selectedParticipant.name || '-'}</p>
+                          </div>
+                          <div>
+                            <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Ville</label>
+                            <p className="text-deep-black font-medium">{selectedParticipant.city || '-'}</p>
+                          </div>
+                          <div>
+                            <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Tranche d'âge</label>
+                            <p className="text-deep-black font-medium">{selectedParticipant.age_range || '-'}</p>
+                          </div>
+                          <div>
+                            <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Ancienneté</label>
+                            <p className="text-deep-black font-medium">{activityYearsLabels[selectedParticipant.activity_years || ''] || selectedParticipant.activity_years || '-'}</p>
+                          </div>
+                        </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">WhatsApp</label>
-                      <p className="text-deep-black font-medium">{selectedParticipant.contact?.whatsapp || selectedParticipant.whatsapp || '-'}</p>
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Email</label>
-                      <p className="text-deep-black font-medium">{selectedParticipant.contact?.email || selectedParticipant.email || '-'}</p>
-                    </div>
-                  </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">WhatsApp</label>
+                            <p className="text-deep-black font-medium">{contactData.whatsapp || selectedParticipant.whatsapp || '-'}</p>
+                          </div>
+                          <div>
+                            <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Email</label>
+                            <p className="text-deep-black font-medium">{contactData.email || selectedParticipant.email || '-'}</p>
+                          </div>
+                        </div>
+                      </>
+                    )
+                  })()}
 
                   <div>
                     <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Activité principale</label>
-                    <p className="text-deep-black font-medium">{activityLabels[selectedParticipant.main_activity || ''] || selectedParticipant.main_activity || '-'}</p>
+                    <p className="text-deep-black font-medium">{selectedParticipant ? activityLabels[selectedParticipant.main_activity || ''] || selectedParticipant.main_activity || '-' : '-'}</p>
                   </div>
 
                   <div>
                     <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Outils numériques</label>
                     <div className="flex flex-wrap gap-2">
-                      {selectedParticipant.digital_tools.length > 0 ? (
+                      {selectedParticipant && selectedParticipant.digital_tools.length > 0 ? (
                         selectedParticipant.digital_tools.map((tool, idx) => (
                           <span key={idx} className="px-3 py-1 bg-electric-green/10 text-electric-green rounded-full text-sm">
                             {digitalToolsLabels[tool.tool_name || ''] || tool.tool_name}
@@ -989,7 +1007,7 @@ export default function AdminPage() {
                   <div>
                     <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Défis</label>
                     <div className="flex flex-wrap gap-2">
-                      {selectedParticipant.challenges.length > 0 ? (
+                      {selectedParticipant && selectedParticipant.challenges.length > 0 ? (
                         selectedParticipant.challenges.map((challenge, idx) => (
                           <span key={idx} className="px-3 py-1 bg-deep-blue/10 text-deep-blue rounded-full text-sm">
                             {challengesLabels[challenge.challenge_name || ''] || challenge.challenge_name}
@@ -1004,9 +1022,9 @@ export default function AdminPage() {
                   <div>
                     <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Besoins numériques</label>
                     <div className="flex flex-wrap gap-2">
-                      {selectedParticipant.digital_needs.length > 0 ? (
+                      {selectedParticipant && selectedParticipant.digital_needs.length > 0 ? (
                         selectedParticipant.digital_needs.map((need, idx) => (
-                          <span key={idx} className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">
+                          <span key={idx} className="px-3 py-1 bg-electric-green/10 text-electric-green rounded-full text-sm">
                             {needsLabels[need.need_name || ''] || need.need_name}
                           </span>
                         ))
@@ -1018,44 +1036,40 @@ export default function AdminPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Prêt à investir</label>
-                      <p className="text-deep-black font-medium">
-                        {willingToInvestLabels[selectedParticipant.investment_intention[0]?.willing_to_invest || ''] || selectedParticipant.investment_intention[0]?.willing_to_invest || '-'}
-                      </p>
+                      <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Intention d'investissement</label>
+                      <p className="text-deep-black font-medium">{selectedParticipant ? willingToInvestLabels[selectedParticipant.investment_intention[0]?.willing_to_invest || ''] || selectedParticipant.investment_intention[0]?.willing_to_invest || '-' : '-'}</p>
                     </div>
                     <div>
                       <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Budget</label>
-                      <p className="text-deep-black font-medium">
-                        {budgetLabels[selectedParticipant.investment_intention[0]?.budget_range || ''] || selectedParticipant.investment_intention[0]?.budget_range || '-'}
-                      </p>
+                      <p className="text-deep-black font-medium">{selectedParticipant ? budgetLabels[selectedParticipant.investment_intention[0]?.budget_range || ''] || selectedParticipant.investment_intention[0]?.budget_range || '-' : '-'}</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-3 gap-4 pt-4 border-t border-black/10">
                     <div>
                       <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Score opportunité</label>
-                      <p className="text-deep-black font-bold text-2xl">{selectedParticipant.opportunity_score}</p>
+                      <p className="text-deep-black font-bold text-2xl">{selectedParticipant?.opportunity_score || '-'}</p>
                     </div>
                     <div>
                       <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Niveau</label>
-                      <div className="mt-1">{getOpportunityBadge(selectedParticipant.opportunity_level)}</div>
+                      <p className="text-deep-black font-medium">{selectedParticipant ? getOpportunityBadge(selectedParticipant.opportunity_level) : '-'}</p>
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Maturité digitale</label>
-                      <p className="text-deep-black font-medium">{selectedParticipant.digital_maturity}/10</p>
+                      <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Maturité numérique</label>
+                      <p className="text-deep-black font-medium">{selectedParticipant?.digital_maturity || '-'}</p>
                     </div>
                   </div>
 
                   <div>
                     <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Date de création</label>
                     <p className="text-deep-black font-medium text-sm">
-                      {new Date(selectedParticipant.created_at).toLocaleDateString('fr-FR', {
+                      {selectedParticipant?.created_at ? new Date(selectedParticipant.created_at).toLocaleDateString('fr-FR', {
                         day: 'numeric',
                         month: 'long',
                         year: 'numeric',
                         hour: '2-digit',
                         minute: '2-digit'
-                      })}
+                      }) : '-'}
                     </p>
                   </div>
                 </div>
