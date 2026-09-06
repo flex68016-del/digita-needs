@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Digital Needs Survey
 
-## Getting Started
+Une application web pour collecter et analyser les besoins numériques des professionnels et entrepreneurs, avec un dashboard administratif sécurisé.
 
-First, run the development server:
+## Fonctionnalités
 
+- **Sondage interactif** : Formulaire en 6 étapes pour comprendre les activités, défis et besoins numériques
+- **Dashboard admin** : Analyse des données avec visualisations (graphiques, KPIs)
+- **Authentification sécurisée** : Cookie-based session avec rate limiting et validation des inputs
+- **Base de données** : Supabase avec Row Level Security (RLS)
+- **Export de données** : CSV, Excel, JSON
+
+## Stack Technique
+
+- **Frontend** : Next.js 16 (App Router), React, TypeScript
+- **Styling** : Tailwind CSS, shadcn/ui
+- **Animations** : Framer Motion
+- **Charts** : Recharts
+- **Base de données** : Supabase
+- **Validation** : Zod
+- **Sécurité** : Rate limiting, security headers, HTTPS enforcement
+
+## Installation
+
+1. Cloner le repository :
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/flex68016-del/digita-needs.git
+cd digital-needs-survey
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Installer les dépendances :
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Configurer les variables d'environnement dans `.env.local` :
+```env
+NEXT_PUBLIC_SUPABASE_URL=votre_url_supabase
+NEXT_PUBLIC_SUPABASE_ANON_KEY=votre_cle_anon
+SUPABASE_SERVICE_ROLE_KEY=votre_cle_service_role
+ADMIN_PASSWORD=votre_mot_de_passe_admin
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Lancer le serveur de développement :
+```bash
+npm run dev
+```
 
-## Learn More
+5. Ouvrir [http://localhost:3000](http://localhost:3000)
 
-To learn more about Next.js, take a look at the following resources:
+## Déploiement
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Vercel
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Connecter le repository à Vercel
+2. Ajouter les variables d'environnement dans les settings du projet
+3. Déployer
 
-## Deploy on Vercel
+### Variables d'environnement requises
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `NEXT_PUBLIC_SUPABASE_URL` : URL de votre projet Supabase
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` : Clé anon publique Supabase
+- `SUPABASE_SERVICE_ROLE_KEY` : Clé service role Supabase (pour l'admin)
+- `ADMIN_PASSWORD` : Mot de passe pour accéder au dashboard admin
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Structure du projet
+
+```
+src/
+├── app/
+│   ├── admin/           # Dashboard admin
+│   ├── api/admin/       # API routes admin (login, logout, stats)
+│   └── page.tsx         # Page d'accueil avec sondage
+├── components/          # Composants UI réutilisables
+├── lib/
+│   ├── auth.ts          # Fonctions d'authentification
+│   ├── rate-limit.ts    # Rate limiting
+│   └── supabase.ts      # Client Supabase
+└── middleware.ts        # Middleware Next.js (auth, HTTPS)
+```
+
+## Sécurité
+
+- Rate limiting sur le login (5 tentatives / 15 minutes)
+- Validation des inputs avec Zod
+- Cookies httpOnly, secure, sameSite=strict
+- Security headers (HSTS, X-Frame-Options, etc.)
+- HTTPS forcé en production
+- Supabase RLS activé
+
+## License
+
+MIT
