@@ -81,6 +81,49 @@ const acquisitionLabels: Record<string, string> = {
   autre: 'Autre'
 }
 
+const willingToInvestLabels: Record<string, string> = {
+  oui: 'Oui',
+  peut_etre: 'Peut-être',
+  besoin_info: 'Je souhaite d\'abord en savoir plus',
+  non: 'Non'
+}
+
+const budgetLabels: Record<string, string> = {
+  lt_25k: '< 25 000 FCFA',
+  '25k_50k': '25 000 – 50 000 FCFA',
+  '50k_100k': '50 000 – 100 000 FCFA',
+  '100k_250k': '100 000 – 250 000 FCFA',
+  '250k_500k': '250 000 – 500 000 FCFA',
+  gt_500k: '+500 000 FCFA',
+  unknown: 'Je ne sais pas'
+}
+
+const activityYearsLabels: Record<string, string> = {
+  lt_1: 'Moins d\'1 an',
+  '1_3': '1 à 3 ans',
+  '3_5': '3 à 5 ans',
+  '5_10': '5 à 10 ans',
+  gt_10: 'Plus de 10 ans'
+}
+
+const activityLabels: Record<string, string> = {
+  commerce: 'Commerce',
+  agriculture: 'Agriculture',
+  elevage: 'Élevage',
+  restauration: 'Restauration',
+  mode: 'Mode',
+  beaute: 'Beauté',
+  transport: 'Transport',
+  immobilier: 'Immobilier',
+  formation: 'Formation',
+  services: 'Services',
+  artisanat: 'Artisanat',
+  sante: 'Santé',
+  btp: 'BTP',
+  technologie: 'Technologie',
+  autre: 'Autre'
+}
+
 interface Stats {
   totalParticipants: number
   totalActivities: number
@@ -818,7 +861,7 @@ export default function AdminPage() {
                           {!response.whatsapp && !response.email && '-'}
                         </td>
                         <td className="py-4 px-4 text-xs text-graphite">{response.city || '-'}</td>
-                        <td className="py-4 px-4 text-xs text-graphite">{response.main_activity || '-'}</td>
+                        <td className="py-4 px-4 text-xs text-graphite">{activityLabels[response.main_activity] || response.main_activity || '-'}</td>
                         <td className="py-4 px-4 text-xs text-graphite max-w-xs truncate">
                           {response.digital_tools.map(t => digitalToolsLabels[t.tool_name] || t.tool_name).join(', ') || '-'}
                         </td>
@@ -898,7 +941,7 @@ export default function AdminPage() {
                     </div>
                     <div>
                       <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Ancienneté</label>
-                      <p className="text-deep-black font-medium">{selectedParticipant.activity_years || '-'}</p>
+                      <p className="text-deep-black font-medium">{activityYearsLabels[selectedParticipant.activity_years] || selectedParticipant.activity_years || '-'}</p>
                     </div>
                   </div>
 
@@ -915,7 +958,7 @@ export default function AdminPage() {
 
                   <div>
                     <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Activité principale</label>
-                    <p className="text-deep-black font-medium">{selectedParticipant.main_activity || '-'}</p>
+                    <p className="text-deep-black font-medium">{activityLabels[selectedParticipant.main_activity] || selectedParticipant.main_activity || '-'}</p>
                   </div>
 
                   <div>
@@ -967,13 +1010,13 @@ export default function AdminPage() {
                     <div>
                       <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Prêt à investir</label>
                       <p className="text-deep-black font-medium">
-                        {selectedParticipant.investment_intention[0]?.willing_to_invest || '-'}
+                        {willingToInvestLabels[selectedParticipant.investment_intention[0]?.willing_to_invest] || selectedParticipant.investment_intention[0]?.willing_to_invest || '-'}
                       </p>
                     </div>
                     <div>
                       <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Budget</label>
                       <p className="text-deep-black font-medium">
-                        {selectedParticipant.investment_intention[0]?.budget_range || '-'}
+                        {budgetLabels[selectedParticipant.investment_intention[0]?.budget_range] || selectedParticipant.investment_intention[0]?.budget_range || '-'}
                       </p>
                     </div>
                   </div>
