@@ -63,10 +63,10 @@ BEGIN
 
   -- Calculate digital maturity
   SELECT COUNT(*) INTO v_maturity
-  FROM digital_tools
-  WHERE participant_id = v_id;
+  FROM digital_tools dt
+  WHERE dt.participant_id = v_id;
 
-  UPDATE participants SET digital_maturity = v_maturity WHERE id = v_id;
+  UPDATE participants SET digital_maturity = v_maturity WHERE participants.id = v_id;
 
   -- Calculate opportunity score
   v_score := calculate_opportunity_score(v_id);
@@ -80,7 +80,7 @@ BEGIN
     v_level := 'low';
   END IF;
 
-  UPDATE participants SET opportunity_score = v_score, opportunity_level = v_level WHERE id = v_id;
+  UPDATE participants SET opportunity_score = v_score, opportunity_level = v_level WHERE participants.id = v_id;
 
   RETURN QUERY SELECT v_id, v_score, v_level;
 END;
