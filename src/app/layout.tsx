@@ -13,19 +13,19 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "Digital Needs - Étude Nationale sur la Digitalisation",
-  description: "Comprendre les activités professionnelles et révéler les opportunités numériques. Participez à notre étude nationale sur la transformation digitale.",
+  title: "Digital Needs - Étude sur la Digitalisation",
+  description: "Comprendre les activités professionnelles et révéler les opportunités numériques. Participez à notre étude sur la transformation digitale.",
   keywords: ["digitalisation", "étude", "entrepreneurs", "professionnels", "transformation numérique", "opportunités"],
   authors: [{ name: "Digital Needs" }],
   openGraph: {
-    title: "Digital Needs - Étude Nationale sur la Digitalisation",
+    title: "Digital Needs - Étude sur la Digitalisation",
     description: "Comprendre les activités professionnelles et révéler les opportunités numériques",
     type: "website",
     locale: "fr_FR",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Digital Needs - Étude Nationale sur la Digitalisation",
+    title: "Digital Needs - Étude sur la Digitalisation",
     description: "Comprendre les activités professionnelles et révéler les opportunités numériques",
   },
   robots: {
