@@ -861,15 +861,15 @@ export default function AdminPage() {
                           {!response.whatsapp && !response.email && '-'}
                         </td>
                         <td className="py-4 px-4 text-xs text-graphite">{response.city || '-'}</td>
-                        <td className="py-4 px-4 text-xs text-graphite">{activityLabels[response.main_activity] || response.main_activity || '-'}</td>
+                        <td className="py-4 px-4 text-xs text-graphite">{activityLabels[response.main_activity || ''] || response.main_activity || '-'}</td>
                         <td className="py-4 px-4 text-xs text-graphite max-w-xs truncate">
-                          {response.digital_tools.map(t => digitalToolsLabels[t.tool_name] || t.tool_name).join(', ') || '-'}
+                          {response.digital_tools.map(t => digitalToolsLabels[t.tool_name || ''] || t.tool_name).join(', ') || '-'}
                         </td>
                         <td className="py-4 px-4 text-xs text-graphite max-w-xs truncate">
-                          {response.challenges.map(c => challengesLabels[c.challenge_name] || c.challenge_name).join(', ') || '-'}
+                          {response.challenges.map(c => challengesLabels[c.challenge_name || ''] || c.challenge_name).join(', ') || '-'}
                         </td>
                         <td className="py-4 px-4 text-xs text-graphite max-w-xs truncate">
-                          {response.digital_needs.map(n => needsLabels[n.need_name] || n.need_name).join(', ') || '-'}
+                          {response.digital_needs.map(n => needsLabels[n.need_name || ''] || n.need_name).join(', ') || '-'}
                         </td>
                         <td className="py-4 px-4 text-xs text-graphite">
                           {response.investment_intention[0]?.budget_range || '-'}
@@ -941,7 +941,7 @@ export default function AdminPage() {
                     </div>
                     <div>
                       <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Ancienneté</label>
-                      <p className="text-deep-black font-medium">{activityYearsLabels[selectedParticipant.activity_years] || selectedParticipant.activity_years || '-'}</p>
+                      <p className="text-deep-black font-medium">{activityYearsLabels[selectedParticipant.activity_years || ''] || selectedParticipant.activity_years || '-'}</p>
                     </div>
                   </div>
 
@@ -958,7 +958,7 @@ export default function AdminPage() {
 
                   <div>
                     <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Activité principale</label>
-                    <p className="text-deep-black font-medium">{activityLabels[selectedParticipant.main_activity] || selectedParticipant.main_activity || '-'}</p>
+                    <p className="text-deep-black font-medium">{activityLabels[selectedParticipant.main_activity || ''] || selectedParticipant.main_activity || '-'}</p>
                   </div>
 
                   <div>
@@ -967,7 +967,7 @@ export default function AdminPage() {
                       {selectedParticipant.digital_tools.length > 0 ? (
                         selectedParticipant.digital_tools.map((tool, idx) => (
                           <span key={idx} className="px-3 py-1 bg-electric-green/10 text-electric-green rounded-full text-sm">
-                            {digitalToolsLabels[tool.tool_name] || tool.tool_name}
+                            {digitalToolsLabels[tool.tool_name || ''] || tool.tool_name}
                           </span>
                         ))
                       ) : (
@@ -982,7 +982,7 @@ export default function AdminPage() {
                       {selectedParticipant.challenges.length > 0 ? (
                         selectedParticipant.challenges.map((challenge, idx) => (
                           <span key={idx} className="px-3 py-1 bg-deep-blue/10 text-deep-blue rounded-full text-sm">
-                            {challengesLabels[challenge.challenge_name] || challenge.challenge_name}
+                            {challengesLabels[challenge.challenge_name || ''] || challenge.challenge_name}
                           </span>
                         ))
                       ) : (
@@ -997,7 +997,7 @@ export default function AdminPage() {
                       {selectedParticipant.digital_needs.length > 0 ? (
                         selectedParticipant.digital_needs.map((need, idx) => (
                           <span key={idx} className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">
-                            {needsLabels[need.need_name] || need.need_name}
+                            {needsLabels[need.need_name || ''] || need.need_name}
                           </span>
                         ))
                       ) : (
@@ -1010,13 +1010,13 @@ export default function AdminPage() {
                     <div>
                       <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Prêt à investir</label>
                       <p className="text-deep-black font-medium">
-                        {willingToInvestLabels[selectedParticipant.investment_intention[0]?.willing_to_invest] || selectedParticipant.investment_intention[0]?.willing_to_invest || '-'}
+                        {willingToInvestLabels[selectedParticipant.investment_intention[0]?.willing_to_invest || ''] || selectedParticipant.investment_intention[0]?.willing_to_invest || '-'}
                       </p>
                     </div>
                     <div>
                       <label className="text-xs font-medium text-graphite uppercase tracking-[0.1em] block mb-2">Budget</label>
                       <p className="text-deep-black font-medium">
-                        {budgetLabels[selectedParticipant.investment_intention[0]?.budget_range] || selectedParticipant.investment_intention[0]?.budget_range || '-'}
+                        {budgetLabels[selectedParticipant.investment_intention[0]?.budget_range || ''] || selectedParticipant.investment_intention[0]?.budget_range || '-'}
                       </p>
                     </div>
                   </div>
